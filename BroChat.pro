@@ -1,75 +1,64 @@
 QT += core network xml widgets webkitwidgets websockets svg
 
-QMAKE_CXXFLAGS += -DQXMPP_STATIC
+CONFIG += c++11
+
+Debug:TARGET = $$join(TARGET,,,d)
+DESTDIR = ../bin
+
+include(external/qxmpp-master/qxmpp.pri)
+
+LIBS += -L../bin $${QXMPP_LIBS}
+INCLUDEPATH += $${QXMPP_INCLUDEPATH}
+
+INCLUDEPATH += src/providers src/
 
 HEADERS += \
-    qtwitchchat.h \
-    qchatservice.h \
-    qchatmessage.h \
-    qsettingsdialog.h \
-    qchatsmile.h \
-    qsc2tvchat.h \
-    settingsconsts.h \
-    qgoodgamechat.h \
-    qcybergamechat.h \
-    qaceschat.h \
-    qgamerstvchat.h \
-    qbrochatview.h \    
-    qfunstreamchat.h \
-    qchatupdateserver.h \
-    qstreamboxchat.h \
-    qchatstatistic.h \
-    qhitboxchat.h \
-    qgipsyteamchat.h \
-    qrealltvchat.h \
-    qyoutubechat.h \
-    qlivecodingchat.h
+    src/qchatservice.h \
+    src/qchatmessage.h \
+    src/qsettingsdialog.h \
+    src/qchatsmile.h \
+    src/settingsconsts.h \
+    src/qchatupdateserver.h \
+    src/qchatstatistic.h \
+    src/qbrochatview.h \
+    src/providers/qtwitchchat.h \
+    src/providers/qsc2tvchat.h \
+    src/providers/qgoodgamechat.h \
+    src/providers/qcybergamechat.h \
+    src/providers/qaceschat.h \
+    src/providers/qgamerstvchat.h \
+    src/providers/qfunstreamchat.h \
+    src/providers/qstreamboxchat.h \
+    src/providers/qhitboxchat.h \
+    src/providers/qgipsyteamchat.h \
+    src/providers/qrealltvchat.h \
+    src/providers/qyoutubechat.h \
+    src/providers/qlivecodingchat.h
 
 SOURCES += \
-    main.cpp \
-    qtwitchchat.cpp \
-    qchatservice.cpp \
-    qchatmessage.cpp \
-    qsettingsdialog.cpp \
-    qchatsmile.cpp \
-    qsc2tvchat.cpp \
-    qgoodgamechat.cpp \
-    qcybergamechat.cpp \
-    qaceschat.cpp \
-    qgamerstvchat.cpp \
-    qbrochatview.cpp \
-    qfunstreamchat.cpp \
-    qchatupdateserver.cpp \
-    qstreamboxchat.cpp \
-    qchatstatistic.cpp \
-    qhitboxchat.cpp \
-    qgipsyteamchat.cpp \
-    qrealltvchat.cpp \
-    qyoutubechat.cpp \
-    qlivecodingchat.cpp
+    src/main.cpp \
+    src/qchatservice.cpp \
+    src/qchatmessage.cpp \
+    src/qsettingsdialog.cpp \
+    src/qchatsmile.cpp \
+    src/qchatupdateserver.cpp \
+    src/qchatstatistic.cpp \
+    src/qbrochatview.cpp \
+    src/providers/qtwitchchat.cpp \
+    src/providers/qsc2tvchat.cpp \
+    src/providers/qgoodgamechat.cpp \
+    src/providers/qcybergamechat.cpp \
+    src/providers/qaceschat.cpp \
+    src/providers/qgamerstvchat.cpp \
+    src/providers/qfunstreamchat.cpp \
+    src/providers/qstreamboxchat.cpp \
+    src/providers/qhitboxchat.cpp \
+    src/providers/qgipsyteamchat.cpp \
+    src/providers/qrealltvchat.cpp \
+    src/providers/qyoutubechat.cpp \
+    src/providers/qlivecodingchat.cpp
 
 RESOURCES += \
-    resources.rc
+    resources/resources.rc
 
-win32:RC_FILE = ico.rc
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/external/qxmpp-master/src/ -lqxmpp
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/external/qxmpp-master/src/ -lqxmppd
-
-unix:!macx: LIBS += -L$$PWD/external/qxmpp-master/src/ -lqxmpp
-
-INCLUDEPATH += \
-    $$PWD/external/qxmpp-master/src/base \
-    $$PWD/external/qxmpp-master/src/client \
-    $$PWD/external/qxmpp-master/src/server
-DEPENDPATH += \
-    $$PWD/external/qxmpp-master/src/base \
-    $$PWD/external/qxmpp-master/src/client \
-    $$PWD/external/qxmpp-master/src/server
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/external/qxmpp-master/src/libqxmpp.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/external/qxmpp-master/src/libqxmppd.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/external/qxmpp-master/src/qxmpp.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/external/qxmpp-master/src/qxmppd.lib
-
-unix:!macx: PRE_TARGETDEPS += $$PWD/external/qxmpp-master/src/libqxmpp.a
+win32:RC_FILE = resources/ico.rc

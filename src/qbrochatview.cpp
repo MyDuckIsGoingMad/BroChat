@@ -2,6 +2,7 @@
 #include<windows.h>
 #endif
 
+#include <windows.h>
 #include <QWebFrame>
 #include <QWheelEvent>
 #include <QDesktopServices>
