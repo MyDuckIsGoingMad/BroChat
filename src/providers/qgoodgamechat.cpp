@@ -602,7 +602,7 @@ void QGoodGameChat::timerEvent( QTimerEvent * event )
 
 void QGoodGameChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/goodgamelogo.png" ), tr( "Reconnect Goodgame Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/goodgamelogo.png" ), tr( "Reconnect Goodgame Chat" ), this );
 }
 
 void QGoodGameChat::changeUseAnimatedSmiles( bool useAnimatedSmiles )

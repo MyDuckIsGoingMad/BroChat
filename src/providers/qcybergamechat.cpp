@@ -431,7 +431,7 @@ void QCyberGameChat::timerEvent( QTimerEvent *event )
 
 void QCyberGameChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/cybergamelogo.png" ), tr( "Reconnect Aces Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/cybergamelogo.png" ), tr( "Reconnect Aces Chat" ), this );
 }
 
 void QCyberGameChat::loadSettings()

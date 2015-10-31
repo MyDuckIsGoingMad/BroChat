@@ -236,7 +236,7 @@ void QGipsyTeamChat::timerEvent( QTimerEvent *event )
 
 void QGipsyTeamChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/gipsyteamlogo.png" ), tr( "Reconnect Gipsyteam Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/gipsyteamlogo.png" ), tr( "Reconnect Gipsyteam Chat" ), this );
 }
 
 void QGipsyTeamChat::loadSettings()

@@ -380,5 +380,5 @@ void QGamersTvChat::timerEvent( QTimerEvent *event )
 
 void QGamersTvChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/gamerstvlogo.png" ), tr( "Reconnect Gamerstv Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/gamerstvlogo.png" ), tr( "Reconnect Gamerstv Chat" ), this );
 }

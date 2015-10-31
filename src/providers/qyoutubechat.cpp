@@ -274,7 +274,7 @@ void QYoutubeChat::timerEvent( QTimerEvent * event )
 
 void QYoutubeChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/youtubelogo.png" ), tr( "Reconnect Youtube Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/youtubelogo.png" ), tr( "Reconnect Youtube Chat" ), this );
 }
 
 void QYoutubeChat::loadSettings()

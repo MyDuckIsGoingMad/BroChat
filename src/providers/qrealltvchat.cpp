@@ -501,7 +501,7 @@ void QReallTvChat::timerEvent( QTimerEvent *event )
 
 void QReallTvChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/realltvlogo.png" ), tr( "Reconnect Realltv Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/realltvlogo.png" ), tr( "Reconnect Realltv Chat" ), this );
 }
 
 void QReallTvChat::loadSettings()

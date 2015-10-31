@@ -372,7 +372,7 @@ void QFunStreamChat::timerEvent( QTimerEvent *event )
 
 void QFunStreamChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/funstreamlogo.png" ), tr( "Reconnect Funstream Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/funstreamlogo.png" ), tr( "Reconnect Funstream Chat" ), this );
 }
 
 void QFunStreamChat::loadSettings()

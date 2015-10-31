@@ -463,7 +463,7 @@ void QTwitchChat::timerEvent( QTimerEvent *event )
 
 void QTwitchChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/twitchlogo.png" ), tr( "Reconnect Twitch Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/twitchlogo.png" ), tr( "Reconnect Twitch Chat" ), this );
 }
 
 void QTwitchChat::loadSettings()

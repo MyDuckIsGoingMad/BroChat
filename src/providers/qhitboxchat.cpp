@@ -544,7 +544,7 @@ void QHitBoxChat::timerEvent( QTimerEvent *event )
 
 void QHitBoxChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/hitboxlogo.png" ), tr( "Reconnect Hitbox Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/hitboxlogo.png" ), tr( "Reconnect Hitbox Chat" ), this );
 }
 
 void QHitBoxChat::loadSettings()

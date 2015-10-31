@@ -525,7 +525,7 @@ void QStreamBoxChat::timerEvent( QTimerEvent *event )
 
 void QStreamBoxChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/streamboxlogo.png" ), tr( "Reconnect Streambox Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/streamboxlogo.png" ), tr( "Reconnect Streambox Chat" ), this );
 }
 
 

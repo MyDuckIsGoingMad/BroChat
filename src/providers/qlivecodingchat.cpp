@@ -305,7 +305,7 @@ void QLivecodingChat::timerEvent( QTimerEvent * event )
 
 void QLivecodingChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/livecodinglogo.png" ), tr( "Reconnect Livecoding Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/livecodinglogo.png" ), tr( "Reconnect Livecoding Chat" ), this );
 }
 
 void QLivecodingChat::loadSettings()

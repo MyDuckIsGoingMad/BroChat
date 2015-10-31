@@ -565,7 +565,7 @@ void QSc2tvChat::timerEvent( QTimerEvent * event )
 
 void QSc2tvChat::createReconnectAction()
 {
-    m_reconnectAction = new QAction( QIcon( ":/resources/sc2tvlogo.png" ), tr( "Reconnect Sc2tv Chat" ), this );
+    m_reconnectAction = new QAction( QIcon( ":/sc2tvlogo.png" ), tr( "Reconnect Sc2tv Chat" ), this );
 }
 
 void QSc2tvChat::loadSettings()
