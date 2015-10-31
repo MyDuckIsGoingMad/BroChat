@@ -33,7 +33,8 @@ HEADERS += \
     src/providers/qgipsyteamchat.h \
     src/providers/qrealltvchat.h \
     src/providers/qyoutubechat.h \
-    src/providers/qlivecodingchat.h
+    src/providers/qlivecodingchat.h \
+    src/coremediator.h
 
 SOURCES += \
     src/main.cpp \
@@ -56,7 +57,8 @@ SOURCES += \
     src/providers/qgipsyteamchat.cpp \
     src/providers/qrealltvchat.cpp \
     src/providers/qyoutubechat.cpp \
-    src/providers/qlivecodingchat.cpp
+    src/providers/qlivecodingchat.cpp \
+    src/coremediator.cpp
 
 RESOURCES += \
     resources/resources.rc
