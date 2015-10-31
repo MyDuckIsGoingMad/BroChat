@@ -104,58 +104,16 @@ QBroChatView::QBroChatView( QWidget *parent )
     QAction *exitAction = new QAction( tr( "&Exit" ), this );
 
     QAction *reconnectAllAction = new QAction( tr( "Reconnect All Chats" ), this );
-/*
-    QAction *reconnectAcesAction = new QAction( QIcon( ":/resources/aceslogo.png" ), tr( "Reconnect Aces Chat" ), this );
-    QAction *reconnectCybergameAction = new QAction( QIcon( ":/resources/cybergamelogo.png" ), tr( "Reconnect Cybergame Chat" ), this );
-    QAction *reconnectFunstreamAction = new QAction( QIcon( ":/resources/funstreamlogo.png" ), tr( "Reconnect Funstream Chat" ), this );
-    QAction *reconnectGamersTvAction = new QAction( QIcon( ":/resources/gamerstvlogo.png" ), tr( "Reconnect Gamerstv Chat" ), this );
-    QAction *reconnectGipsyTeamAction = new QAction( QIcon( ":/resources/gipsyteamlogo.png" ), tr( "Reconnect Gipsyteam Chat" ), this );
-    QAction *reconnectGoodgameAction = new QAction( QIcon( ":/resources/goodgamelogo.png" ), tr( "Reconnect Goodgame Chat" ), this );
-    QAction *reconnectHitboxAction = new QAction( QIcon( ":/resources/hitboxlogo.png" ), tr( "Reconnect Hitbox Chat" ), this );
-    QAction *reconnectLivecodingAction = new QAction( QIcon( ":/resources/livecodinglogo.png" ), tr( "Reconnect Livecoding Chat" ), this );
-    QAction *reconnectRealltvAction = new QAction( QIcon( ":/resources/realltvlogo.png" ), tr( "Reconnect Realltv Chat" ), this );
-    QAction *reconnectSc2tvAction = new QAction( QIcon( ":/resources/sc2tvlogo.png" ), tr( "Reconnect Sc2tv Chat" ), this );
-    QAction *reconnectStreamboxAction = new QAction( QIcon( ":/resources/streamboxlogo.png" ), tr( "Reconnect Streambox Chat" ), this );
-    QAction *reconnectTwitchAction = new QAction( QIcon( ":/resources/twitchlogo.png" ), tr( "Reconnect Twitch Chat" ), this );
-    QAction *reconnectYoutubeAction = new QAction( QIcon( ":/resources/youtubelogo.png" ), tr( "Reconnect Youtube Chat" ), this );
-*/
+
     QObject::connect( settingsAction, SIGNAL( triggered() ), this, SLOT( showSettings() ) );
     QObject::connect( exitAction, SIGNAL( triggered() ), this, SIGNAL( closeWindow() ) );
 
     QObject::connect( reconnectAllAction, SIGNAL(triggered()), &m_core, SIGNAL(reconnect()));
-/*
-    QObject::connect( reconnectAcesAction, SIGNAL( triggered() ), acesChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectCybergameAction, SIGNAL( triggered() ), cybergameChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectFunstreamAction, SIGNAL( triggered() ), funstreamChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectGamersTvAction, SIGNAL( triggered() ), gamerstvChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectGipsyTeamAction, SIGNAL( triggered() ), gipsyteamChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectGoodgameAction, SIGNAL( triggered() ), goodgameChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectHitboxAction, SIGNAL( triggered() ), hitboxChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectLivecodingAction, SIGNAL( triggered() ), livecodingChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectRealltvAction, SIGNAL( triggered() ), realltvChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectSc2tvAction, SIGNAL( triggered() ), sc2tvChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectStreamboxAction, SIGNAL( triggered() ), streamboxChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectTwitchAction, SIGNAL( triggered() ), twitchChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectYoutubeAction, SIGNAL( triggered() ), youtubeChat_, SLOT( reconnect() ) );
-*/
+
     addAction( settingsAction );
 
     addAction( reconnectAllAction );
-    /*
-    addAction( reconnectAcesAction );
-    addAction( reconnectCybergameAction );
-    addAction( reconnectFunstreamAction );
-    addAction( reconnectGamersTvAction );
-    addAction( reconnectGipsyTeamAction );
-    addAction( reconnectGoodgameAction );
-    addAction( reconnectHitboxAction );
-    addAction( reconnectLivecodingAction );
-    addAction( reconnectRealltvAction );
-    addAction( reconnectSc2tvAction );
-    addAction( reconnectStreamboxAction );
-    addAction( reconnectTwitchAction );
-    addAction( reconnectYoutubeAction );
-*/
+
     addActions(m_core.getActions());
     addAction( exitAction );
 
