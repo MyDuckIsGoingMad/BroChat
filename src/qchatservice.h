@@ -56,7 +56,7 @@ protected slots:
     virtual void reconnect() = 0;
 
 signals:
-    void newMessage( QChatMessage *message );
+    void newMessage( QChatMessageShared message );
     void newStatistic( QChatStatistic *statistic );
 private:
     bool showSystemMessages_;

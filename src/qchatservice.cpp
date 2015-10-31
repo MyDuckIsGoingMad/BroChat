@@ -6,10 +6,11 @@
 
 QChatService::QChatService( QObject *parent )
     : QObject( parent )
+    , m_reconnectAction(nullptr)
     , showSystemMessages_( true )
     , aliasesSelection_( false )
     , removeBlackListUsers_( false )
-    , m_reconnectAction(nullptr)
+
 {
 }
 

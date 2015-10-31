@@ -117,7 +117,7 @@ QBroChatView::QBroChatView( QWidget *parent )
     addActions(m_core.getActions());
     addAction( exitAction );
 
-    QObject::connect( &m_core, SIGNAL(newMessage(QChatMessage*)), this, SLOT(slotNewMessage(QChatMessage*)));
+    QObject::connect( &m_core, SIGNAL(newMessage(QChatMessageShared)), this, SLOT(slotNewMessage(QChatMessageShared)));
     QObject::connect( &m_core, SIGNAL(newStatistic(QChatStatistic*)), this, SLOT(onNewStatistic(QChatStatistic*)));
     QObject::connect( this, SIGNAL(loadFinished(bool)), &m_core, SIGNAL(reconnect()));
 
@@ -345,10 +345,9 @@ void QBroChatView::changeSaveToFileState()
     }
 }
 
-void QBroChatView::slotNewMessage( QChatMessage *message )
+void QBroChatView::slotNewMessage(QChatMessageShared message )
 {
     addMessage( message->service(), message->nickName(), message->message(), message->type() );
-    message->deleteLater();
 }
 
 void QBroChatView::onNewStatistic( QChatStatistic *statistic )
@@ -361,7 +360,7 @@ void QBroChatView::onNewStatistic( QChatStatistic *statistic )
         //QString jsonMessage ="{\"service\":\"" + service + "\",\"nick\":\"" + formattedNickName + "\",\"message\":\"" + formattedMessage + "\",\"type\":\"" + type + "\"}";
         //chatUpdateServer_->sendMessage( jsonMessage );
     }
-    statistic->deleteLater();
+    delete statistic;
 }
 
 void QBroChatView::loadSettings()

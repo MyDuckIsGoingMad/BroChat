@@ -35,6 +35,7 @@ const QString FUNSTREAM_SERVICE = "funstream";
 
 QFunStreamChat::QFunStreamChat( QObject *parent )
     : QChatService( parent )
+    , socket_(nullptr)
     , saveConnectionTimerId_( -1 )
     , reconnectTimerId_( -1 )
     , saveConnectionInterval_( DEFAULT_FUNSTREAM_SAVE_CONNECTION_INTTERVAL )
@@ -59,7 +60,7 @@ void QFunStreamChat::connect()
     smiles_.clear();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Connecting to " + channelName_ + "...", "")));
 
     getChannelInfo();
 }
@@ -92,7 +93,7 @@ void QFunStreamChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -166,7 +167,7 @@ void QFunStreamChat::onChannelInfoLoaded()
             }
 
             if( isShowSystemMessages() )
-                emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Smiles ready...", "", this ) );
+                emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Smiles ready...", "")));
 
             connectToWebClient();
         }
@@ -180,7 +181,7 @@ void QFunStreamChat::onChannelInfoLoadError()
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Can not connect to " + channelName_ + "..." + reply->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Can not connect to " + channelName_ + "..." + reply->errorString(), "")));
 
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -241,7 +242,7 @@ void QFunStreamChat::onWebSocketConnected()
 void QFunStreamChat::onWebSocketError()
 {
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Web socket error..." + socket_->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Web socket error..." + socket_->errorString(), "")));
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
 }
@@ -296,33 +297,33 @@ void QFunStreamChat::onTextMessageRecieved( const QString &message )
                         if( blackListUser )
                         {
                             //TODO: игнорируемые
-                            emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, nickName, message, "ignore", this ) );
+                            emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, nickName, message, "ignore")));
                         }
                         else
                         {
                             if( supportersListUser )
                             {
                                 //TODO: саппортеры
-                                emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, nickName, message, "supporter", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, nickName, message, "supporter")));
                             }
                             else
                             {
                                 if( isContainsAliases( message ) )
                                 {
                                     //TODO: сообщение к стримеру
-                                    emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, nickName, message, "alias", this ) );
+                                    emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, nickName, message, "alias")));
                                 }
                                 else
                                 {
                                     //TODO: простое сообщение
-                                    emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, nickName, message, "", this ) );
+                                    emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, nickName, message, "")));
                                 }
                             }
                         }
                     }
 
 
-                    //emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, jsonObj[ "from" ].toObject()[ "name" ].toString(), jsonObj[ "to" ].toObject()[ "name" ].toString() + jsonObj[ "text" ].toString(), "", this ) );
+                    //emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, jsonObj[ "from" ].toObject()[ "name" ].toString(), jsonObj[ "to" ].toObject()[ "name" ].toString() + jsonObj[ "text" ].toString(), "")));
                 }
 
             }
@@ -344,7 +345,7 @@ void QFunStreamChat::onTextMessageRecieved( const QString &message )
     else if( message.left(3) == "430" || message.left( 3 ) == "431" )
     {
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Connected to " + channelName_ + "...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( FUNSTREAM_SERVICE, FUNSTREAM_USER, "Connected to " + channelName_ + "...", "")));
     }
 }
 

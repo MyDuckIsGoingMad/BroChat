@@ -49,12 +49,12 @@ void QGipsyTeamChat::connect()
         return;
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Connecting to " + channelName_ + "...", "")));
 
     channelLink_ = DEFAULT_GIPSYTEAM_CHANNEL_MESSAGES_PREFIX + channelName_ + DEFAULT_GIPSYTEAM_CHANNEL_MESSAGES_POSTFIX;
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Connected to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Connected to " + channelName_ + "...", "")));
 
     if( updateMessagesTimerId_ == -1 )
         updateMessagesTimerId_ = startTimer( updateMessagesInterval_ );
@@ -88,7 +88,7 @@ void QGipsyTeamChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Reconnecting to " + channelName_ + "...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Reconnecting to " + channelName_ + "...", "")));
     connect();
 }
 
@@ -123,7 +123,7 @@ void QGipsyTeamChat::onChannelInfoLoaded()
 
 
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Connected to " + channelName_ + "...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Connected to " + channelName_ + "...", "")));
 
         if( updateMessagesTimerId_ == -1 )
             updateMessagesTimerId_ = startTimer( updateMessagesInterval_ );
@@ -132,7 +132,7 @@ void QGipsyTeamChat::onChannelInfoLoaded()
     {
 
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Can not connect to " + channelName_ + "...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( GIPSYTEAM_SERVICE, GIPSYTEAM_USER, "Can not connect to " + channelName_ + "...", "")));
 
         if( reconnectTimerId_ == -1 )
             reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -202,7 +202,7 @@ void QGipsyTeamChat::onMessagesLoaded()
 
                         //qDebug() << message;
 
-                        emit newMessage( new QChatMessage( GIPSYTEAM_SERVICE, nickName, message, "", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( GIPSYTEAM_SERVICE, nickName, message, "")));
                     }
 
                 }

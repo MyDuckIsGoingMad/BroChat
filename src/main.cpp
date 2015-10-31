@@ -1,5 +1,8 @@
 #include <QApplication>
 #include <QWebSettings>
+#include <QQmlApplicationEngine>
+#include <QQuickWindow>
+#include <QQmlContext>
 
 #include "qbrochatview.h"
 
@@ -23,6 +26,12 @@ int main( int argc, char *argv[] )
     QBroChatView chatView;
 
     QObject::connect( &chatView, SIGNAL( closeWindow() ), &app, SLOT( quit() ) );
+
+
+
+    QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("coreMediator", &CoreMediator::instance());
+    engine.load(QUrl(QStringLiteral("../qml/main.qml")));
 
     chatView.show();
 

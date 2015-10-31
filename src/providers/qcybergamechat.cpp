@@ -40,6 +40,7 @@ const QString CYBERGAME_SERVICE = "cybergame";
 
 QCyberGameChat::QCyberGameChat( QObject *parent )
     : QChatService( parent )
+    , socket_(nullptr)
     , lastUpd_( 0 )
     , saveConnectionTimerId_( -1 )
     , reconnectTimerId_( -1 )
@@ -66,7 +67,7 @@ void QCyberGameChat::connect()
     getSmiles();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Connecting to " + channelName_ + "...", "")));
 
     socket_ = new QWebSocket( QString(), QWebSocketProtocol::VersionLatest, this );
 
@@ -107,7 +108,7 @@ void QCyberGameChat::disconnect()
     }
     socket_ = 0;
 
-    emit newStatistic( new QChatStatistic( CYBERGAME_SERVICE, "", this ) );
+    emit newStatistic( new QChatStatistic( CYBERGAME_SERVICE, ""));
 }
 
 void QCyberGameChat::reconnect()
@@ -117,7 +118,7 @@ void QCyberGameChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -131,7 +132,7 @@ void QCyberGameChat::onWebSocketError()
 {
     //qDebug() << socket_->error() << socket_->errorString() << socket_->state() << error;
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Web socket error..." + socket_->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Web socket error..." + socket_->errorString(), "")));
     //reconnect();
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -157,7 +158,7 @@ void QCyberGameChat::onTextMessageRecieved( const QString &message )
                 socket_->sendTextMessage( answer );
 
                 if( isShowSystemMessages() )
-                    emit newMessage( new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Connected to " + channelName_ + "...", "", this ) );
+                    emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Connected to " + channelName_ + "...", "")));
 
                 getStatistic();
                 if( statisticTimerId_ == -1 )
@@ -201,25 +202,25 @@ void QCyberGameChat::onTextMessageRecieved( const QString &message )
                             if( blackListUser )
                             {
                                 //TODO: список игнорируемых
-                                emit newMessage( new QChatMessage( CYBERGAME_SERVICE, nickName, message, "ignore", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, nickName, message, "ignore")));
                             }
                             else
                             {
                                 if( supportersListUser )
                                 {
                                     //TODO: список саппортеров
-                                    emit newMessage( new QChatMessage( CYBERGAME_SERVICE, nickName, message, "supporter", this ) );
+                                    emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, nickName, message, "supporter")));
                                 }
                                 else
                                 {
                                     if( containsAliases )
                                     {
                                         //TODO: обращение к стримеру
-                                        emit newMessage( new QChatMessage( CYBERGAME_SERVICE, nickName, message, "alias", this ) );
+                                        emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, nickName, message, "alias")));
                                     }
                                     else
                                     {
-                                        emit newMessage( new QChatMessage( CYBERGAME_SERVICE, nickName, message, "", this ) );
+                                        emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, nickName, message, "")));
                                     }
                                 }
                             }
@@ -230,7 +231,7 @@ void QCyberGameChat::onTextMessageRecieved( const QString &message )
             else
             {
                 //qDebug() << "Unsupported message" << command;
-                 //emit newMessage( new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, command, this ) );
+                 //emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, command, this ) );
             }
         }
     }
@@ -285,7 +286,7 @@ void QCyberGameChat::onSmilesLoaded()
                 smiles_.insert( smile.name(), smile );
             }
             if( isShowSystemMessages() )
-                emit newMessage( new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Smiles ready...", "", this ) );
+                emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Smiles ready...", "")));
         }
     }
 
@@ -316,7 +317,7 @@ void QCyberGameChat::onSmilesLoadError()
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Can not load smiles...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, "Can not load smiles...", "")));
 
     //TODO: timer for smiles loading
     //getSmiles();
@@ -350,8 +351,8 @@ void QCyberGameChat::onStatisticLoaded()
 
             QString statistic = jsonObj[ "viewers" ].toString();
             //"online":"1"
-            emit newStatistic( new QChatStatistic( CYBERGAME_SERVICE, statistic, this ) );
-            //emit newMessage( new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, QString( "Viewers: " + statistic ), "", this ) );
+            emit newStatistic( new QChatStatistic( CYBERGAME_SERVICE, statistic));
+            //emit newMessage(QChatMessageShared(new QChatMessage( CYBERGAME_SERVICE, CYBERGAME_USER, QString( "Viewers: " + statistic ), "")));
         }
     }
 

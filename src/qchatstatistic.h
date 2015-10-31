@@ -1,14 +1,12 @@
 #ifndef QCHATSTATISTIC
 #define QCHATSTATISTIC
 
-#include <QObject>
 #include <QString>
 
-class QChatStatistic: public QObject
+class QChatStatistic
 {
-    Q_OBJECT
 public:
-    explicit QChatStatistic( const QString &service, const QString &statistic, QObject *parent = 0 );
+    explicit QChatStatistic( const QString &service, const QString &statistic);
     virtual ~QChatStatistic();
 public:
     QString service() const;

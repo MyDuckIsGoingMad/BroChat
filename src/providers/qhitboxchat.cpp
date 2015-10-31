@@ -36,6 +36,7 @@ const QString HITBOX_USER = "HITBOX";
 
 QHitBoxChat::QHitBoxChat( QObject *parent )
     : QChatService( parent )
+    , socket_(nullptr)
     , channelName_( DEFAULT_HITBOX_CHANNEL_NAME )
     , reconnectTimerId_( -1 )
     , reconnectInterval_( DEFAULT_HITBOX_RECONNECT_INTERVAL )
@@ -61,7 +62,7 @@ void QHitBoxChat::connect()
     getSmiles();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Connecting to " + channelName_ + "...", "")));
 
     servers_.clear();
     getServersList();
@@ -94,7 +95,7 @@ void QHitBoxChat::disconnect()
     }
     socket_ = 0;
 
-    emit newStatistic( new QChatStatistic( HITBOX_SERVICE, "", this ) );
+    emit newStatistic( new QChatStatistic( HITBOX_SERVICE, ""));
 }
 
 void QHitBoxChat::reconnect()
@@ -104,7 +105,7 @@ void QHitBoxChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -170,7 +171,7 @@ void QHitBoxChat::onServersListLoadError()
     //qDebug() << reply->readAll();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Can not load servers list..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Can not load servers list..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "")));
 
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -223,7 +224,7 @@ void QHitBoxChat::onSocketHashLoadError()
     //qDebug() << reply->readAll();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Can not load websocket hash..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Can not load websocket hash..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "")));
 
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -268,7 +269,7 @@ void QHitBoxChat::onSmilesLoaded()
     }
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Smiles ready...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Smiles ready...", "")));
 
     reply->deleteLater();
 
@@ -281,7 +282,7 @@ void QHitBoxChat::onSmilesLoadError()
     //qDebug() << reply->readAll();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Can not load styles..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Can not load styles..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "")));
 
     reply->deleteLater();
 }
@@ -413,26 +414,26 @@ void QHitBoxChat::onTextMessageReceived( const QString &message )
                                             if( blackListUser )
                                             {
                                                 //TODO: игнорируемые
-                                                emit newMessage( new QChatMessage( HITBOX_SERVICE, nickName, message, "ignore", this ) );
+                                                emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, nickName, message, "ignore")));
                                             }
                                             else
                                             {
                                                 if( supportersListUser )
                                                 {
                                                     //TODO: саппортеры
-                                                    emit newMessage( new QChatMessage( HITBOX_SERVICE, nickName, message, "supporter", this ) );
+                                                    emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, nickName, message, "supporter")));
                                                 }
                                                 else
                                                 {
                                                     if( isContainsAliases( message ) )
                                                     {
                                                         //TODO: сообщение к стримеру
-                                                        emit newMessage( new QChatMessage( HITBOX_SERVICE, nickName, message, "alias", this ) );
+                                                        emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, nickName, message, "alias")));
                                                     }
                                                     else
                                                     {
                                                         //TODO: простое сообщение
-                                                        emit newMessage( new QChatMessage( HITBOX_SERVICE, nickName, message, "", this ) );
+                                                        emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, nickName, message, "")));
                                                     }
                                                 }
                                             }
@@ -441,7 +442,7 @@ void QHitBoxChat::onTextMessageReceived( const QString &message )
                                     else if( argsObj[ "method" ].toString() == "loginMsg" )
                                     {
                                         if( isShowSystemMessages() )
-                                            emit newMessage( new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Connected to " + channelName_ + "...", "", this ) );
+                                            emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Connected to " + channelName_ + "...", "")));
                                         getStatistic();
                                         if( statisticTimerId_ )
                                             statisticTimerId_ = startTimer( statisticInterval_ );
@@ -459,7 +460,7 @@ void QHitBoxChat::onTextMessageReceived( const QString &message )
 void QHitBoxChat::onWebSocketError()
 {
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Web Socket Error ..." + socket_->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( HITBOX_SERVICE, HITBOX_USER, "Web Socket Error ..." + socket_->errorString(), "")));
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
     //qDebug() << socket_->errorString();

@@ -23,7 +23,8 @@ void CoreMediator::init()
 void CoreMediator::registerChatService(QSharedPointer<QChatService> service)
 {
     m_services.push_back(service);
-    connect(service.data(), SIGNAL(newMessage(QChatMessage *)), this, SIGNAL(newMessage(QChatMessage *)));
+    connect(service.data(), SIGNAL(newMessage(QChatMessageShared)), this, SIGNAL(newMessage(QChatMessageShared)));
+    connect(service.data(), SIGNAL(newMessage(QChatMessageShared)), &m_history, SLOT(addMessage(QChatMessageShared)));
     connect(service.data(), SIGNAL(newStatistic(QChatStatistic *)), this, SIGNAL(newStatistic(QChatStatistic *)));
     connect(this, SIGNAL(reconnect()), service.data(), SLOT(doReconnect()));
     connect(this, SIGNAL(setShowSystemMessages(bool)), service.data(), SLOT(setShowSystemMessages(bool)));
@@ -42,6 +43,11 @@ QList<QAction *> CoreMediator::getActions()
         actions.push_back(service->getReconnectAction());
     }
     return actions;
+}
+
+QChatHistoryListModel *CoreMediator::historyListModel()
+{
+    return &m_history;
 }
 
 

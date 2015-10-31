@@ -53,7 +53,7 @@ void QAcesChat::connect()
         return;
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( ACES_SERVICE, ACES_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, ACES_USER, "Connecting to " + channelName_ + "...", "")));
 
     getLastMessage();
 }
@@ -82,7 +82,7 @@ void QAcesChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( ACES_SERVICE, ACES_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, ACES_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -107,7 +107,7 @@ void QAcesChat::onLastMessageLoaded()
     if( startIdPos == -1 )
     {
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( ACES_SERVICE, ACES_USER, "Can not read last message from " + channelName_ + "..." + reply->errorString(), "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, ACES_USER, "Can not read last message from " + channelName_ + "..." + reply->errorString(), "")));
         if( reconnectTimerId_ == -1 )
             reconnectTimerId_ = startTimer( reconnectInterval_ );
         reply->deleteLater();
@@ -122,7 +122,7 @@ void QAcesChat::onLastMessageLoaded()
     if( updateChatInfoTimerId_ == -1 )
         updateChatInfoTimerId_ = startTimer( updateChatInfoInterval_ );
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( ACES_SERVICE, ACES_USER, "Connected to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, ACES_USER, "Connected to " + channelName_ + "...", "")));
 
     reply->deleteLater();
 }
@@ -131,7 +131,7 @@ void QAcesChat::onLastMessageLoadError()
 {
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( ACES_SERVICE, ACES_USER, "Can not connect to " + channelName_ + "..." + reply->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, ACES_USER, "Can not connect to " + channelName_ + "..." + reply->errorString(), "")));
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
     reply->deleteLater();
@@ -282,25 +282,25 @@ void QAcesChat::onChatInfoLoaded()
             if( blackListUser )
             {
                 //TODO: список игнорируемых
-                emit newMessage( new QChatMessage( ACES_SERVICE, nickName, message, "ignore", this ) );
+                emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, nickName, message, "ignore")));
             }
             else
             {
                 if( supportersListUser )
                 {
                     //TODO: список саппортеров
-                    emit newMessage( new QChatMessage( ACES_SERVICE, nickName, message, "supporter", this ) );
+                    emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, nickName, message, "supporter")));
                 }
                 else
                 {
                     if( containsAliases )
                     {
                         //TODO: обращение к стримеру
-                        emit newMessage( new QChatMessage( ACES_SERVICE, nickName, message, "alias", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, nickName, message, "alias")));
                     }
                     else
                     {
-                        emit newMessage( new QChatMessage( ACES_SERVICE, nickName, message, "", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, nickName, message, "")));
                     }
                 }
             }
@@ -319,7 +319,7 @@ void QAcesChat::onChatInfoLoadError()
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( ACES_SERVICE, ACES_USER, "Can not read channel messages..." + reply->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( ACES_SERVICE, ACES_USER, "Can not read channel messages..." + reply->errorString(), "")));
 
     reply->deleteLater();
 }

@@ -74,7 +74,7 @@ void QSc2tvChat::connect()
     getStyles();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Connecting to " + channelName_ + "...", "")));
 
     getChannelInfo();
 }
@@ -104,7 +104,7 @@ void QSc2tvChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -184,7 +184,7 @@ void QSc2tvChat::onSmilesLoaded()
     }
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Smiles ready...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Smiles ready...", "")));
 
     reply->deleteLater();
 }
@@ -193,7 +193,7 @@ void QSc2tvChat::onSmilesLoadError()
 {
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Can not load smiles..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Can not load smiles..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "")));
     //TODO: timer for smiles loading
     //getSmiles();// timer may be
     reply->deleteLater();
@@ -255,7 +255,7 @@ void QSc2tvChat::onStylesLoadError()
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Can not load styles..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Can not load styles..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "")));
     //TODO: timer for loading smiles
     //getStyles();// timer may be
 
@@ -359,7 +359,7 @@ void QSc2tvChat::onChannelInfoLoaded()
             channelLink_ = DEFAULT_SC2TV_CHANNEL_PREFIX_LINK + channelInfo + ".json";
 
             if( isShowSystemMessages() )
-                emit newMessage( new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Connected to " + channelName_ + "...", "", this ) );
+                emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Connected to " + channelName_ + "...", "")));
 
             if( updateMessagesTimerId_ == -1 )
                 updateMessagesTimerId_ = startTimer( updateMessagesInterval_ );
@@ -389,7 +389,7 @@ void QSc2tvChat::onChannelInfoLoadError()
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Can not connect to " + channelName_ + "..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Can not connect to " + channelName_ + "..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "")));
 
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -440,6 +440,7 @@ void QSc2tvChat::onMessagesLoaded()
                     QJsonObject jsonMessage = jsonMessagesList[ messageIndex ];
 
                     QString message = jsonMessage[ "message" ].toString();
+                    QString nickName = jsonMessage[ "name" ].toString();
 
                     //TODO: править
 
@@ -451,8 +452,6 @@ void QSc2tvChat::onMessagesLoaded()
 
                     message = insertSmiles( message );
                     //message = QChatMessage::insertLinks( message );
-
-                    QString nickName = jsonMessage[ "name" ].toString();
 
                     bool blackListUser = blackList().contains( nickName );
                     bool supportersListUser = supportersList().contains( nickName );
@@ -471,26 +470,26 @@ void QSc2tvChat::onMessagesLoaded()
                         if( blackListUser )
                         {
                             //TODO: игнорируемые
-                            emit newMessage( new QChatMessage( SC2TV_SERVICE, nickName, message, "ignore", this ) );
+                            emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, nickName, message, "ignore")));
                         }
                         else
                         {
                             if( supportersListUser )
                             {
                                 //TODO: саппортеры
-                                emit newMessage( new QChatMessage( SC2TV_SERVICE, nickName, message, "supporter", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, nickName, message, "supporter")));
                             }
                             else
                             {
                                 if( isContainsAliases( message ) )
                                 {
                                     //TODO: сообщение к стримеру
-                                    emit newMessage( new QChatMessage( SC2TV_SERVICE, nickName, message, "alias", this ) );
+                                    emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, nickName, message, "alias")));
                                 }
                                 else
                                 {
                                     //TODO: простое сообщение
-                                    emit newMessage( new QChatMessage( SC2TV_SERVICE, nickName, message, "", this ) );
+                                    emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, nickName, message, "")));
                                 }
                             }
                         }
@@ -515,7 +514,7 @@ void QSc2tvChat::onMessagesLoadError()
 {
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
 
-    //emit newMessage( new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Can not load messages..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), this ) );
+    //emit newMessage(QChatMessageShared(new QChatMessage( SC2TV_SERVICE, SC2TV_USER, "Can not load messages..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), this ) );
     //reconnect(); channelId есть
 
     //lastMessageId_ = lastMainMessageId_;
@@ -631,13 +630,13 @@ void QSc2tvChat::onStreamesLoaded()
                     {
                         channelLink_ = DEFAULT_SC2TV_CHANNEL_PREFIX_LINK + QString::number( stream[ "id" ].toInt() ) + ".json";
                         //getMessages();
-                        emit newMessage( new QChatMessage( "sc2tv", SC2TV_USER, "Connecting to " + channelName_ + "...", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( "sc2tv", SC2TV_USER, "Connecting to " + channelName_ + "...", this ) );
                         startTimer( updateInterval_ );
 //                        break;
                     }
                 }
                 //if( channelLink_ == "" )
-                //    emit newMessage( new QChatMessage( "sc2tv", SC2TV_USER, "Can not connect to " + channelName_ + "... Channel is offline...", this ) );
+                //    emit newMessage(QChatMessageShared(new QChatMessage( "sc2tv", SC2TV_USER, "Can not connect to " + channelName_ + "... Channel is offline...", this ) );
             }
         }
     }

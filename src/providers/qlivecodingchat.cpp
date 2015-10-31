@@ -40,6 +40,8 @@ const QString LIVECODING_SERVICE = "livecoding";
 
 QLivecodingChat::QLivecodingChat( QObject * parent )
     : QChatService( parent )
+    , mucManager_(nullptr)
+    , xmppClient_(nullptr)
     , reconnectTimerId_( -1 )
     , reconnectInterval_( DEFAULT_LIVECODING_RECONNECT_INTERVAL )
     , statisticTimerId_( -1 )
@@ -69,7 +71,7 @@ void QLivecodingChat::connect()
     xmppClient_->addExtension( mucManager_ );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Connecting to " + channelName_ + "...", "")));
 
     xmppClient_->connectToServer( DEFAULT_LIVECODING_JID , DEFAULT_LIVECODING_PASSWORD );
 }
@@ -108,7 +110,7 @@ void QLivecodingChat::disconnect()
         xmppClient_ = 0;
     }
 
-    //TODO: emit newStatistic( new QChatStatistic( LIVECODING_SERVICE, "", this ) );
+    //TODO: emit newStatistic( new QChatStatistic( LIVECODING_SERVICE, "")));
 }
 
 void QLivecodingChat::reconnect()
@@ -118,7 +120,7 @@ void QLivecodingChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -131,7 +133,7 @@ void QLivecodingChat::onConnected()
     room->join();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Connected to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Connected to " + channelName_ + "...", "")));
 
     smiles_.clear();
     getSmiles();
@@ -140,7 +142,7 @@ void QLivecodingChat::onConnected()
 void QLivecodingChat::onError( QXmppClient::Error )
 {
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Unknown Error ...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Unknown Error ...", "")));
 
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -170,25 +172,25 @@ void QLivecodingChat::onMessageReceived( const QXmppMessage & message )
             if( blackListUser )
             {
                 //TODO: список игнорируемых
-                emit newMessage( new QChatMessage( LIVECODING_SERVICE, nickName, messageBody, "ignore", this ) );
+                emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, nickName, messageBody, "ignore")));
             }
             else
             {
                 if( supportersListUser )
                 {
                     //TODO: список саппортеров
-                    emit newMessage( new QChatMessage( LIVECODING_SERVICE, nickName, messageBody, "supporter", this ) );
+                    emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, nickName, messageBody, "supporter")));
                 }
                 else
                 {
                     if( containsAliases )
                     {
                         //TODO: обращение к стримеру
-                        emit newMessage( new QChatMessage( LIVECODING_SERVICE, nickName, messageBody, "alias", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, nickName, messageBody, "alias")));
                     }
                     else
                     {
-                        emit newMessage( new QChatMessage( LIVECODING_SERVICE, nickName, messageBody, "", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, nickName, messageBody, "")));
                     }
                 }
             }
@@ -251,7 +253,7 @@ void QLivecodingChat::onSmilesLoaded()
     }
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Smiles ready...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( LIVECODING_SERVICE, LIVECODING_USER, "Smiles ready...", "")));
 
     reply->deleteLater();
 

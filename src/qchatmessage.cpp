@@ -3,12 +3,16 @@
 
 #include "qchatmessage.h"
 
-QChatMessage::QChatMessage( const QString &service, const QString &nickName, const QString &message, const QString &type, QObject *parent )
-: QObject( parent )
-, service_( service )
-, nickName_( nickName )
-, message_( message )
-, type_( type )
+QChatMessage::QChatMessage()
+{
+
+}
+
+QChatMessage::QChatMessage( const QString &service, const QString &nickName, const QString &message, const QString &type)
+    : service_( service )
+    , nickName_( nickName )
+    , message_( message )
+    , type_( type )
 {
 }
 

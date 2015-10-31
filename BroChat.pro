@@ -1,4 +1,4 @@
-QT += core network xml widgets webkitwidgets websockets svg
+QT += quick qml core network xml widgets webkitwidgets websockets svg
 
 CONFIG += c++11
 
@@ -34,7 +34,9 @@ HEADERS += \
     src/providers/qrealltvchat.h \
     src/providers/qyoutubechat.h \
     src/providers/qlivecodingchat.h \
-    src/coremediator.h
+    src/coremediator.h \
+    src/helpers.h \
+    src/qchathistorylistmodel.h
 
 SOURCES += \
     src/main.cpp \
@@ -58,9 +60,15 @@ SOURCES += \
     src/providers/qrealltvchat.cpp \
     src/providers/qyoutubechat.cpp \
     src/providers/qlivecodingchat.cpp \
-    src/coremediator.cpp
+    src/coremediator.cpp \
+    src/qchathistorylistmodel.cpp
 
 RESOURCES += \
     resources/resources.rc
+
+# Additional import path used to resolve QML modules in Qt Creator's code model
+QML_IMPORT_PATH =
+
+DISTFILES += qml/*
 
 win32:RC_FILE = resources/ico.rc

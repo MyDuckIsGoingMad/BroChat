@@ -34,7 +34,7 @@ private:
     void loadSettings();
     bool isLink( const QString& str );
 public slots:
-    void slotNewMessage( QChatMessage *message );
+    void slotNewMessage( QChatMessageShared message );
     void onNewStatistic( QChatStatistic *statistic );
     void saveSettings();
     void showSettings();

@@ -47,6 +47,7 @@ const QString GOODGAME_SERVICE = "goodgame";
 
 QGoodGameChat::QGoodGameChat( QObject *parent )
     : QChatService( parent )
+    , socket_(nullptr)
     , saveConnectionTimerId_( -1 )
     , reconnectTimerId_( -1 )
     , saveConnectionInterval_( DEFAULT_GOODGAME_SAVE_CONNECTION_INTERVAL )
@@ -71,7 +72,7 @@ void QGoodGameChat::connect()
     getSmiles();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Connecting to " + channelName_ + "...", "")));
 
     getChannelInfo();
 }
@@ -103,7 +104,7 @@ void QGoodGameChat::disconnect()
     }
     socket_ = 0;
 
-    emit newStatistic( new QChatStatistic( GOODGAME_SERVICE, "", this ) );
+    emit newStatistic( new QChatStatistic( GOODGAME_SERVICE, ""));
 
 }
 
@@ -114,7 +115,7 @@ void QGoodGameChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -210,7 +211,7 @@ void QGoodGameChat::onSmilesLoaded()
             smiles_.insert( formattedSmileName, "file:///" + smilesPath + "/" + smileName );
     }
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Smiles ready...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Smiles ready...", "")));
     reply->deleteLater();
 }
 
@@ -219,7 +220,7 @@ void QGoodGameChat::onSmilesLoadError()
 {
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Can not load smiles..." + reply->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Can not load smiles..." + reply->errorString(), "")));
     reply->deleteLater();
 }
 
@@ -258,7 +259,7 @@ void QGoodGameChat::onChannelInfoLoadError()
 {
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Can not connect to " + channelName_ + "..." + reply->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Can not connect to " + channelName_ + "..." + reply->errorString(), "")));
 
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -280,7 +281,7 @@ void QGoodGameChat::connectToWebClient()
 void QGoodGameChat::onWebSocketError()
 {
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Web Socket Error ..." + socket_->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Web Socket Error ..." + socket_->errorString(), "")));
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
 }
@@ -327,26 +328,26 @@ void QGoodGameChat::onTextMessageRecieved( const QString& message )
                     if( blackListUser )
                     {
                         //TODO: игнорируемые
-                        emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "ignore", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "ignore")));
                     }
                     else
                     {
                         if( supportersListUser )
                         {
                             //TODO: саппортеры
-                            emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "supporter", this ) );
+                            emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "supporter")));
                         }
                         else
                         {
                             if( isContainsAliases( message ) )
                             {
                                 //TODO: обращение к стримеру
-                                emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "alias", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "alias")));
                             }
                             else
                             {
                                 //TODO: простое сообщение
-                                emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "")));
                             }
                         }
                     }
@@ -378,25 +379,25 @@ void QGoodGameChat::onTextMessageRecieved( const QString& message )
                     if( blackListUser )
                     {
                         //TODO: игнорируемые
-                        emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "ignore", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "ignore")));
                     }
                     else
                     {
                         if( supportersListUser )
                         {
                             //TODO: саппортеры
-                            emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "supporter", this ) );
+                            emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "supporter")));
                         }
                         else
                         {
                             if( isContainsAliases( message ) )
                             {
                                 //TODO: обращение к стримеру
-                                emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "alias", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "alias")));
                             }
                             else
                             {
-                                emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "")));
                             }
                         }
                     }
@@ -413,7 +414,7 @@ void QGoodGameChat::onTextMessageRecieved( const QString& message )
                 socket_->sendTextMessage( answer );
 
                 if( isShowSystemMessages() )
-                    emit newMessage( new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Connected to " + channelName_ + "...", "", this ) );
+                    emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, GOODGAME_USER, "Connected to " + channelName_ + "...", "")));
 
                 getStatistic();
                 if( statisticTimerId_ == -1 )
@@ -452,26 +453,26 @@ void QGoodGameChat::onTextMessageRecieved( const QString& message )
                             if( blackListUser )
                             {
                                 //TODO: игнорируемые
-                                emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "ignore", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "ignore")));
                             }
                             else
                             {
                                 if( supportersListUser )
                                 {
                                     //TODO: саппортеры
-                                    emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "supporter", this ) );
+                                    emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "supporter")));
                                 }
                                 else
                                 {
                                     if( isContainsAliases( message ) )
                                     {
                                         //TODO: обращение к стримеру
-                                        emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "alias", this ) );
+                                        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "alias")));
                                     }
                                     else
                                     {
                                         //TODO: простое сообщение
-                                        emit newMessage( new QChatMessage( GOODGAME_SERVICE, nickName, message, "", this ) );
+                                        emit newMessage(QChatMessageShared(new QChatMessage( GOODGAME_SERVICE, nickName, message, "")));
                                     }
                                 }
                             }
@@ -521,7 +522,7 @@ void QGoodGameChat::onStatisticLoaded()
                 if( jsonStatistic[ "status" ].toString() != "Live" )
                     statistic = "0";
 
-                emit newStatistic( new QChatStatistic( GOODGAME_SERVICE, statistic, this ) );               
+                emit newStatistic( new QChatStatistic( GOODGAME_SERVICE, statistic));
             }
         }
     }

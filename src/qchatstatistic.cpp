@@ -1,9 +1,8 @@
 #include "qchatstatistic.h"
 
-QChatStatistic::QChatStatistic( const QString &service, const QString &statistic, QObject *parent )
-: QObject( parent )
-, service_( service )
-, statistic_( statistic )
+QChatStatistic::QChatStatistic(const QString &service, const QString &statistic)
+    : service_( service )
+    , statistic_( statistic )
 {
 }
 

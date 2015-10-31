@@ -61,7 +61,7 @@ void QYoutubeChat::connect()
         return;
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( YOUTUBE_SERVICE, YOUTUBE_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( YOUTUBE_SERVICE, YOUTUBE_USER, "Connecting to " + channelName_ + "...", "")));
 
     getChannelInfo();
 }
@@ -97,7 +97,7 @@ void QYoutubeChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( YOUTUBE_SERVICE, YOUTUBE_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( YOUTUBE_SERVICE, YOUTUBE_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -126,7 +126,7 @@ void QYoutubeChat::onChannelInfoLoaded()
     if( !lastMessageTime_.isEmpty() )
     {
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( YOUTUBE_SERVICE, YOUTUBE_USER, "Connected to " + channelName_ + "...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( YOUTUBE_SERVICE, YOUTUBE_USER, "Connected to " + channelName_ + "...", "")));
 
         if( updateMessagesTimerId_ == -1 )
             updateMessagesTimerId_ = startTimer( updateMessagesInterval_ );
@@ -205,26 +205,26 @@ void QYoutubeChat::onMessagesLoaded()
                     if( blackListUser )
                     {
                         //TODO: игнорируемые
-                        emit newMessage( new QChatMessage( YOUTUBE_SERVICE, nickName, message, "ignore", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( YOUTUBE_SERVICE, nickName, message, "ignore")));
                     }
                     else
                     {
                         if( supportersListUser )
                         {
                             //TODO: саппортеры
-                            emit newMessage( new QChatMessage( YOUTUBE_SERVICE, nickName, message, "supporter", this ) );
+                            emit newMessage(QChatMessageShared(new QChatMessage( YOUTUBE_SERVICE, nickName, message, "supporter")));
                         }
                         else
                         {
                             if( isContainsAliases( message ) )
                             {
                                 //TODO: сообщение к стримеру
-                                emit newMessage( new QChatMessage( YOUTUBE_SERVICE, nickName, message, "alias", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( YOUTUBE_SERVICE, nickName, message, "alias")));
                             }
                             else
                             {
                                 //TODO: простое сообщение
-                                emit newMessage( new QChatMessage( YOUTUBE_SERVICE, nickName, message, "", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( YOUTUBE_SERVICE, nickName, message, "")));
                             }
                         }
                     }

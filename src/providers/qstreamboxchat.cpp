@@ -40,6 +40,7 @@ const QString STREAMBOX_USER = "STREAMBOX";
 
 QStreamBoxChat::QStreamBoxChat( QObject *parent )
     : QChatService( parent )
+    , socket_(nullptr)
     , reconnectTimerId_( -1 )
     , reconnectInterval_( DEFAULT_STREAMBOX_RECONNECT_INTERVAL )
     , statisticTimerId_( -1 )
@@ -61,7 +62,7 @@ void QStreamBoxChat::connect()
         return;
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, "Connecting to " + channelName_ + "...", "")));
 
     socket_ = new QWebSocket( QString(), QWebSocketProtocol::VersionLatest, this );
     //socket_-
@@ -106,7 +107,7 @@ void QStreamBoxChat::disconnect()
     }
     socket_ = 0;
 
-    emit newStatistic( new QChatStatistic( STREAMBOX_SERVICE, "", this ) );
+    emit newStatistic( new QChatStatistic( STREAMBOX_SERVICE, ""));
 }
 
 void QStreamBoxChat::reconnect()
@@ -116,7 +117,7 @@ void QStreamBoxChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, "Reconnecting...", "", this  ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -127,7 +128,7 @@ void QStreamBoxChat::onWebSocketConnected()
     socket_->sendTextMessage( message );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, "Connected to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, "Connected to " + channelName_ + "...", "")));
 
     getStatistic();
 
@@ -145,7 +146,7 @@ void QStreamBoxChat::onWebSocketError()
     errString.replace( "\r\n", "" );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, errString , "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, errString , "")));
 
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -210,25 +211,25 @@ void QStreamBoxChat::onTextMessageReceived( const QString& message )
                             if( blackListUser )
                             {
                                 //TODO: список игнорируемых
-                                emit newMessage( new QChatMessage( STREAMBOX_SERVICE, nickName, message, "ignore", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, nickName, message, "ignore")));
                             }
                             else
                             {
                                 if( supportersListUser )
                                 {
                                     //TODO: список саппортеров
-                                    emit newMessage( new QChatMessage( STREAMBOX_SERVICE, nickName, message, "supporter", this ) );
+                                    emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, nickName, message, "supporter")));
                                 }
                                 else
                                 {
                                     if( containsAliases )
                                     {
                                         //TODO: обращение к стримеру
-                                        emit newMessage( new QChatMessage( STREAMBOX_SERVICE, nickName, message, "alias", this ) );
+                                        emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, nickName, message, "alias")));
                                     }
                                     else
                                     {
-                                        emit newMessage( new QChatMessage( STREAMBOX_SERVICE, nickName, message, "", this ) );
+                                        emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, nickName, message, "")));
                                     }
                                 }
                             }
@@ -273,7 +274,7 @@ void QStreamBoxChat::onTextMessageReceived( const QString& message )
                 if( actionsMap.contains( action ) )
                 {
                     //if( isShowSystemMessages() )
-                    emit newMessage( new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, womenName + " " + actionsMap[ action ] + " " + userName, "", this ) );
+                    emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, womenName + " " + actionsMap[ action ] + " " + userName, "")));
                 }
 
             }
@@ -327,10 +328,10 @@ void QStreamBoxChat::onTextMessageReceived( const QString& message )
                         if( role >= 0 && role < roleActionsMap.size() - 1 )
                         {
                             //if( isShowSystemMessages() )
-                            emit newMessage( new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER,
+                            emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER,
                                                                moderatorName + " " +
                                                                roleActionsMap[ role ] + " " +
-                                                               userName + newRoleMap[ role ], "", this ) );
+                                                               userName + newRoleMap[ role ], "")));
                         }
                     }
                 }
@@ -380,7 +381,7 @@ void QStreamBoxChat::onStatisticLoaded()
 
             QString statistic = QString::number( usersCount ) + "+(" + QString::number( online - usersCount ) + ")";
 
-            emit newStatistic( new QChatStatistic( STREAMBOX_SERVICE, statistic, this ) );            
+            emit newStatistic( new QChatStatistic( STREAMBOX_SERVICE, statistic));
         }
     }
 
@@ -397,7 +398,7 @@ void QStreamBoxChat::onPong( quint64 elapsedTime, const QByteArray &payload )
 {
     /*
     qDebug() << "Popongui";
-    emit newMessage( new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, QString( payload ) + " " + QString::number( elapsedTime ), "", this ) );
+    emit newMessage(QChatMessageShared(new QChatMessage( STREAMBOX_SERVICE, STREAMBOX_USER, QString( payload ) + " " + QString::number( elapsedTime ), "")));
     qDebug() << elapsedTime;
     qDebug() << payload;
     */

@@ -48,6 +48,8 @@ const QString REALLTV_USER = "REALLTV";
 
 QReallTvChat::QReallTvChat( QObject *parent )
     : QChatService( parent )
+    , mucManager_(nullptr)
+    , xmppClient_(nullptr)
     , reconnectTimerId_( -1 )
     , reconnectInterval_( DEFAULT_REALLTV_RECONNECT_INTERVAL )
     , statisticTimerId_( -1 )
@@ -96,7 +98,7 @@ void QReallTvChat::connect()
     //xmppClient_->logger()->setLoggingType( QXmppLogger::StdoutLogging );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Connecting to " + channelName_ + "...", "")));
 
 
 
@@ -151,7 +153,7 @@ void QReallTvChat::disconnect()
         xmppClient_ = 0;
     }
 
-    emit newStatistic( new QChatStatistic( REALLTV_SERVICE, "", this ) );
+    emit newStatistic( new QChatStatistic( REALLTV_SERVICE, ""));
 }
 
 void QReallTvChat::reconnect()
@@ -161,7 +163,7 @@ void QReallTvChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Reconnecting...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Reconnecting...", "")));
     connect();
 }
 
@@ -176,11 +178,11 @@ void QReallTvChat::onConnected()
     room->join();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Connected to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Connected to " + channelName_ + "...", "")));
 
     getChannelInfo();
 
-    emit newStatistic( new QChatStatistic( REALLTV_SERVICE, "", this ) );
+    emit newStatistic( new QChatStatistic( REALLTV_SERVICE, ""));
 
     smiles_.clear();
     getSmiles();
@@ -191,7 +193,7 @@ void QReallTvChat::onError( QXmppClient::Error error )
     qDebug() << error;
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Unknown Error ...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Unknown Error ...", "")));
 
     if( reconnectTimerId_ == -1 )
         reconnectTimerId_ = startTimer( reconnectInterval_ );
@@ -227,25 +229,25 @@ void QReallTvChat::onMessageReceived( const QXmppMessage &message )
             if( blackListUser )
             {
                 //TODO: список игнорируемых
-                emit newMessage( new QChatMessage( REALLTV_SERVICE, nickName, messageBody, "ignore", this ) );
+                emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, nickName, messageBody, "ignore")));
             }
             else
             {
                 if( supportersListUser )
                 {
                     //TODO: список саппортеров
-                    emit newMessage( new QChatMessage( REALLTV_SERVICE, nickName, messageBody, "supporter", this ) );
+                    emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, nickName, messageBody, "supporter")));
                 }
                 else
                 {
                     if( containsAliases )
                     {
                         //TODO: обращение к стримеру
-                        emit newMessage( new QChatMessage( REALLTV_SERVICE, nickName, messageBody, "alias", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, nickName, messageBody, "alias")));
                     }
                     else
                     {
-                        emit newMessage( new QChatMessage( REALLTV_SERVICE, nickName, messageBody, "", this ) );
+                        emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, nickName, messageBody, "")));
                     }
                 }
             }
@@ -349,7 +351,7 @@ void QReallTvChat::onStatisticLoaded()
             }
             */
             QString statistic = QString::number( jsonObj[ "viewers" ].toInt() );
-            emit newStatistic( new QChatStatistic( REALLTV_SERVICE, statistic, this ) );
+            emit newStatistic( new QChatStatistic( REALLTV_SERVICE, statistic));
         }
     }
 
@@ -425,7 +427,7 @@ void QReallTvChat::onSmilesLoaded()
 
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Smiles ready...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Smiles ready...", "")));
 
     reply->deleteLater();
 }
@@ -436,7 +438,7 @@ void QReallTvChat::onSmilesLoadError()
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Can not load smiles..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( REALLTV_SERVICE, REALLTV_USER, "Can not load smiles..." + reply->errorString() + "..." + QDateTime::currentDateTime().toString(), "")));
 
     reply->deleteLater();
 }

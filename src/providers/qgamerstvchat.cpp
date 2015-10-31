@@ -60,7 +60,7 @@ void QGamersTvChat::connect()
     loadSmiles();
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Connecting to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Connecting to " + channelName_ + "...", "")));
 
     channelLink_ = DEFAULT_GAMERSTV_MESSAGES_PREFIX + channelName_ + ".js";
 
@@ -68,7 +68,7 @@ void QGamersTvChat::connect()
         updateMessagesTimerId_ = startTimer( updateMessagesInterval_ );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Connected to " + channelName_ + "...", "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Connected to " + channelName_ + "...", "")));
 
     getStatistic();
     if( statisticTimerId_ == -1 )
@@ -95,7 +95,7 @@ void QGamersTvChat::disconnect()
         killTimer( statisticTimerId_ );
         statisticTimerId_ = -1;
     }
-    emit newStatistic( new QChatStatistic( GAMERSTV_SERVICE, "", this ) );
+    emit newStatistic( new QChatStatistic( GAMERSTV_SERVICE, ""));
 }
 
 void QGamersTvChat::reconnect()
@@ -105,7 +105,7 @@ void QGamersTvChat::reconnect()
     loadSettings();
     if( channelName_ != "" && oldChannelName != "" )
         if( isShowSystemMessages() )
-            emit newMessage( new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Reconnecting to " + channelName_ + "...", "", this ) );
+            emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Reconnecting to " + channelName_ + "...", "")));
     connect();
 }
 
@@ -143,7 +143,7 @@ void QGamersTvChat::onSmilesLoaded()
                                                 smile.toObject()[ "height" ].toInt() ) );
                 }
                 if( isShowSystemMessages() )
-                    emit newMessage( new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Smiles ready...", "", this ) );
+                    emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Smiles ready...", "")));
             }
         }
     }
@@ -156,7 +156,7 @@ void QGamersTvChat::onSmilesLoadError()
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
 
     if( isShowSystemMessages() )
-        emit newMessage( new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Can not load smiles..." + reply->errorString(), "", this ) );
+        emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Can not load smiles..." + reply->errorString(), "")));
 
     //TODO: timer for smiles loading
     //loadSmiles();
@@ -216,7 +216,7 @@ void QGamersTvChat::onStatisticLoaded()
 
             //qDebug() << jsonObj[ "users" ].toString() + "+(" + jsonObj[ "guests" ].toString() + ")";
 
-            emit newStatistic( new QChatStatistic( GAMERSTV_SERVICE, jsonObj[ "users" ].toString() + "+(" + jsonObj[ "guests" ].toString() + ")", this  ) );
+            emit newStatistic( new QChatStatistic( GAMERSTV_SERVICE, jsonObj[ "users" ].toString() + "+(" + jsonObj[ "guests" ].toString() + ")"));
 
         }
     }
@@ -295,23 +295,23 @@ void QGamersTvChat::onMessagesLoaded()
 
                             if( blackListUser )
                             {
-                                emit newMessage( new QChatMessage( GAMERSTV_SERVICE, nickName, message, "ignore", this ) );
+                                emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, nickName, message, "ignore")));
                             }
                             else
                             {
                                 if( supportersListUser )
                                 {
-                                    emit newMessage( new QChatMessage( GAMERSTV_SERVICE, nickName, message, "supporter", this ) );
+                                    emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, nickName, message, "supporter")));
                                 }
                                 else
                                 {
                                     if( isContainsAliases( message ) )
                                     {
-                                        emit newMessage( new QChatMessage( GAMERSTV_SERVICE, nickName, message, "alias", this ) );
+                                        emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, nickName, message, "alias")));
                                     }
                                     else
                                     {
-                                        emit newMessage( new QChatMessage( GAMERSTV_SERVICE, nickName, message, "", this ) );
+                                        emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, nickName, message, "")));
                                     }
                                 }
                             }
@@ -332,7 +332,7 @@ void QGamersTvChat::onMessagesLoaded()
 void QGamersTvChat::onMessagesLoadError()
 {
     QNetworkReply *reply = qobject_cast< QNetworkReply * >( sender() );
-    //emit newMessage( new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Can not load messages for channel №" + channelName_ + "..." + reply->errorString(), "", this ) );
+    //emit newMessage(QChatMessageShared(new QChatMessage( GAMERSTV_SERVICE, GAMERSTV_USER, "Can not load messages for channel №" + channelName_ + "..." + reply->errorString(), "")));
 
     //reconnectTimerId_ =  startTimer( reconnectInterval_ );
 
