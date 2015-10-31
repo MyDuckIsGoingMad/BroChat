@@ -2,10 +2,15 @@
 #define QCHATSERVICE_H
 
 #include <QObject>
+#include <QIcon>
+#include <QAction>
 #include <QStringList>
 
 #include "qchatmessage.h"
 #include "qchatstatistic.h"
+
+class QNetworkAccessManager;
+class QAction;
 
 class QChatService: public QObject
 {
@@ -24,10 +29,18 @@ public:
     const QStringList& supportersList() const;
     const QStringList& blackList() const;
 
+    QAction *getReconnectAction();
+
+protected:
+    QNetworkAccessManager *nam_;
+    QAction *m_reconnectAction;
+
+    virtual void createReconnectAction() = 0;
+
+
 public slots:
-    virtual void connect() = 0;
-    virtual void disconnect() = 0;
-    virtual void reconnect() = 0;
+
+    void doReconnect();
 
     void setShowSystemMessages( bool showSystemMessages );
     void setAliasesSelection( bool aliasesSelection );
@@ -37,6 +50,10 @@ public slots:
     void setSupportersList( const QString &supportersList );
     void setBlackList( const QString &blackList );
 
+protected slots:
+    virtual void connect() = 0;
+    virtual void disconnect() = 0;
+    virtual void reconnect() = 0;
 
 signals:
     void newMessage( QChatMessage *message );

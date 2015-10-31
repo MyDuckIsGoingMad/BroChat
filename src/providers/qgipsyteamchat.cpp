@@ -10,9 +10,13 @@
 #include <QSettings>
 
 #include <QTimerEvent>
-
 #include "settingsconsts.h"
 #include "qgipsyteamchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QGipsyTeamChat> r;
+}
 
 const QString DEFAULT_GIPSYTEAM_CHANNEL_INFO_PREFIX = "http://www.gipsyteam.ru/live/stream?streamer=";
 
@@ -26,15 +30,11 @@ const QString GIPSYTEAM_SERVICE = "gipsyteam";
 const QString GIPSYTEAM_USER = "GIPSYTEAM";
 
 QGipsyTeamChat::QGipsyTeamChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, channelName_()
-, channelLink_()
-, lastMessageId_()
-, updateMessagesTimerId_( -1 )
-, updateMessagesInterval_( DEFAULT_GIPSYTEAM_UPDATE_MESSAGES_INTERVAL )
-, reconnectTimerId_( -1 )
-, reconnectInterval_( DEFAULT_GIPSYTEAM_RECONNECT_INTERVAL )
+    : QChatService( parent )
+    , updateMessagesTimerId_( -1 )
+    , updateMessagesInterval_( DEFAULT_GIPSYTEAM_UPDATE_MESSAGES_INTERVAL )
+    , reconnectTimerId_( -1 )
+    , reconnectInterval_( DEFAULT_GIPSYTEAM_RECONNECT_INTERVAL )
 {
 }
 
@@ -232,6 +232,11 @@ void QGipsyTeamChat::timerEvent( QTimerEvent *event )
     {
         reconnect();
     }
+}
+
+void QGipsyTeamChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/gipsyteamlogo.png" ), tr( "Reconnect Gipsyteam Chat" ), this );
 }
 
 void QGipsyTeamChat::loadSettings()

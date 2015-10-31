@@ -13,8 +13,12 @@
 #include <QTimerEvent>
 
 #include "settingsconsts.h"
-
 #include "qgamerstvchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QGamersTvChat> r;
+}
 
 const QString DEFAULT_GAMERSTV_SMILES_DIR = "http://gamerstv.ru/smiles/";
 const QString DEFAULT_GAMERSTV_MESSAGES_PREFIX = "http://gamerstv.ru/modules/ajax/chat_cache/room_";
@@ -30,17 +34,13 @@ const int DEFAULT_GAMERSTV_RECONNECT_INTERVAL = 10000;
 const int DEFAULT_GAMERSTV_STATISTIC_INTERVAL = 10000;
 
 QGamersTvChat::QGamersTvChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, channelName_( "" )
-, channelLink_( "" )
-, lastMessageId_( "" )
-, updateMessagesTimerId_( -1 )
-, reconnectTimerId_( -1 )
-, updateMessagesInterval_( DEFAULT_GAMERSTV_UPDATE_MESSAGES_INTERVAL )
-, reconnectInterval_( DEFAULT_GAMERSTV_RECONNECT_INTERVAL )
-, statisticTimerId_( -1 )
-, statisticInterval_( DEFAULT_GAMERSTV_STATISTIC_INTERVAL )
+    : QChatService( parent )
+    , updateMessagesTimerId_( -1 )
+    , reconnectTimerId_( -1 )
+    , updateMessagesInterval_( DEFAULT_GAMERSTV_UPDATE_MESSAGES_INTERVAL )
+    , reconnectInterval_( DEFAULT_GAMERSTV_RECONNECT_INTERVAL )
+    , statisticTimerId_( -1 )
+    , statisticInterval_( DEFAULT_GAMERSTV_STATISTIC_INTERVAL )
 {
     //loadSettings();
     //loadSmiles();
@@ -376,4 +376,9 @@ void QGamersTvChat::timerEvent( QTimerEvent *event )
         //qDebug() << "Timer reconnect";
         reconnect();
     }
+}
+
+void QGamersTvChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/gamerstvlogo.png" ), tr( "Reconnect Gamerstv Chat" ), this );
 }

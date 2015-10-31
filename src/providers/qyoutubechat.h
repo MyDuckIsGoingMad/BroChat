@@ -3,8 +3,6 @@
 
 #include "qchatservice.h"
 
-class QNetworkAccessManager;
-
 class QYoutubeChat: public QChatService
 {
     Q_OBJECT
@@ -13,6 +11,7 @@ public:
     virtual ~QYoutubeChat();
 protected:
     virtual void timerEvent( QTimerEvent * event );
+    void createReconnectAction() override;
 private:
     void loadSettings();
 
@@ -35,7 +34,6 @@ private slots:
     void onStatisticLoadError();
 
 private:
-    QNetworkAccessManager * nam_;
     QString channelName_;
 
     QString lastMessageTime_;

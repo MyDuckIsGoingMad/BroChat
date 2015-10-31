@@ -7,8 +7,6 @@
 #include "qchatservice.h"
 
 
-class QNetworkAccessManager;
-
 class QGamersTvChat: public QChatService
 {
     Q_OBJECT
@@ -17,6 +15,7 @@ public:
     virtual ~QGamersTvChat();
 protected:
     void timerEvent( QTimerEvent * );
+    void createReconnectAction() override;
 private:
     void loadSettings();
     void loadSmiles();
@@ -43,7 +42,6 @@ private slots:
     void onStatisticLoadError();
 
 private:
-    QNetworkAccessManager *nam_;
     QString channelName_;
     QString channelLink_;
     QString lastMessageId_;

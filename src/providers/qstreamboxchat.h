@@ -3,7 +3,6 @@
 
 #include "qchatservice.h"
 
-class QNetworkAccessManager;
 class QWebSocket;
 
 class QStreamBoxChat: public QChatService
@@ -14,6 +13,7 @@ public:
     virtual ~QStreamBoxChat();
 protected:
     virtual void timerEvent( QTimerEvent *event );
+    void createReconnectAction() override;
 private:
     void loadSettings();
     QString insertSmiles( const QString& message );
@@ -35,7 +35,6 @@ private slots:
     void onPong( quint64 elapsedTime, const QByteArray & payload );
 
 private:
-    QNetworkAccessManager *nam_;
     QWebSocket *socket_;
     QString channelName_;
     int reconnectTimerId_;

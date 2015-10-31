@@ -15,8 +15,12 @@
 #include <QSettings>
 
 #include "settingsconsts.h"
-
 #include "qfunstreamchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QFunStreamChat> r;
+}
 
 const QString DEFAULT_FUNSTREAM_WEBSOCKET_LINK = "ws://funstream.tv:3811/socket.io/?EIO=3&transport=websocket";
 const QString DEFAULT_FUNSTREAM_SMILES_LINK = "http://funstream.tv/build/images/smiles/";
@@ -30,17 +34,12 @@ const QString FUNSTREAM_USER = "FUNSTREAM";
 const QString FUNSTREAM_SERVICE = "funstream";
 
 QFunStreamChat::QFunStreamChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, socket_( 0 )
-, channelName_()
-, channelId_()
-, smiles_()
-, saveConnectionTimerId_( -1 )
-, reconnectTimerId_( -1 )
-, saveConnectionInterval_( DEFAULT_FUNSTREAM_SAVE_CONNECTION_INTTERVAL )
-, reconnectInterval_( DEFAULT_FUNSTREAM_RECONNECT_INTERVAL )
-, lastMessageId_( 0 )
+    : QChatService( parent )
+    , saveConnectionTimerId_( -1 )
+    , reconnectTimerId_( -1 )
+    , saveConnectionInterval_( DEFAULT_FUNSTREAM_SAVE_CONNECTION_INTTERVAL )
+    , reconnectInterval_( DEFAULT_FUNSTREAM_RECONNECT_INTERVAL )
+    , lastMessageId_( 0 )
 {
 
 }
@@ -369,6 +368,11 @@ void QFunStreamChat::timerEvent( QTimerEvent *event )
     {
         reconnect();
     }
+}
+
+void QFunStreamChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/funstreamlogo.png" ), tr( "Reconnect Funstream Chat" ), this );
 }
 
 void QFunStreamChat::loadSettings()

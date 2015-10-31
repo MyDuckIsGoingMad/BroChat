@@ -5,7 +5,6 @@
 
 #include "qchatservice.h"
 
-class QNetworkAccessManager;
 class QWebSocket;
 
 
@@ -17,6 +16,7 @@ public:
     virtual ~QGoodGameChat();
 protected:
     virtual void timerEvent( QTimerEvent * );
+    void createReconnectAction() override;
 private:
     void loadSettings();
 
@@ -49,7 +49,6 @@ private slots:
     void onPong( quint64 elapsedTime, const QByteArray &payload );
 
 private:
-    QNetworkAccessManager * nam_;
     QWebSocket *socket_;
     QString channelName_;
     //QString token_;

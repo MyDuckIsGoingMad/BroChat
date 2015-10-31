@@ -9,7 +9,6 @@
 #include "qchatservice.h"
 
 class QTcpSocket;
-class QNetworkAccessManager;
 class QNetworkReply;
 
 class QTwitchChat: public QChatService
@@ -34,6 +33,7 @@ private:
     void safeDeleteSocket();
 protected:
     virtual void timerEvent( QTimerEvent * );
+    void createReconnectAction() override;
 
 public slots:
     virtual void connect();
@@ -62,7 +62,6 @@ private slots:
 
 private:
     QTcpSocket *socket_;
-    QNetworkAccessManager *nam_;
     QString oauthString_;
     QString nickName_;
     QString channelName_;

@@ -19,8 +19,12 @@
 #include <QFileInfo>
 
 #include "settingsconsts.h"
-
 #include "qtwitchchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QTwitchChat> r;
+}
 
 const QString DEFAULT_TWITCH_CHAT_HOST_NAME = "irc.twitch.tv";
 const int DEFAULT_TWITCH_CHAT_PORT_NUMBER = 6667;
@@ -36,20 +40,11 @@ const QString TWITCH_USER = "TWITCH";
 const QString TWITCH_SERVICE = "twitch";
 
 QTwitchChat::QTwitchChat( QObject *parent )
-: QChatService( parent )
-, socket_( 0 )
-, nam_( new QNetworkAccessManager( this ) )
-, oauthString_()
-, nickName_()
-, channelName_()
-, selfLink_()
-, emotIconsLink_()
-, badgesLink_()
-, emotIcons_()
-, reconnectTimerId_( -1 )
-, reconnectInterval_( DEFAULT_TWITCH_RECONNECT_INTERVAL )
-, statisticTimerId_( -1 )
-, statisticInterval_( DEFAULT_TWITCH_STATISTIC_INTERVAL  )
+    : QChatService( parent )
+    , reconnectTimerId_( -1 )
+    , reconnectInterval_( DEFAULT_TWITCH_RECONNECT_INTERVAL )
+    , statisticTimerId_( -1 )
+    , statisticInterval_( DEFAULT_TWITCH_STATISTIC_INTERVAL  )
 {
     //loadSettings();
 }
@@ -464,6 +459,11 @@ void QTwitchChat::timerEvent( QTimerEvent *event )
         //qDebug() << "Twitch::timerEvent(): reconnectTimerId_" << reconnectTimerId_;
         reconnect();
     }
+}
+
+void QTwitchChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/twitchlogo.png" ), tr( "Reconnect Twitch Chat" ), this );
 }
 
 void QTwitchChat::loadSettings()

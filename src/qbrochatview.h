@@ -4,12 +4,13 @@
 #include <QSettings>
 
 #include <QWebView>
+#include "coremediator.h"
 
 class QChatMessage;
 class QChatStatistic;
 
 class QChatUpdateServer;
-
+/*
 class QAcesChat;
 class QCyberGameChat;
 class QFunStreamChat;
@@ -21,11 +22,9 @@ class QReallTvChat;
 class QSc2tvChat;
 class QStreamBoxChat;
 class QTwitchChat;
-
 class QYoutubeChat;
-
 class QLivecodingChat;
-
+*/
 class QBroChatView: public QWebView
 {
     Q_OBJECT
@@ -45,6 +44,7 @@ protected:
 
     virtual void timerEvent( QTimerEvent *event );
 private:
+    CoreMediator &m_core;
     void loadSettings();
     bool isLink( const QString& str );
 public slots:
@@ -69,7 +69,7 @@ private slots:
 signals:
     void closeWindow();
 private:
-    QAcesChat *acesChat_;
+ /*   QAcesChat *acesChat_;
     QCyberGameChat *cybergameChat_;
     QFunStreamChat *funstreamChat_;
     QGamersTvChat *gamerstvChat_;
@@ -80,11 +80,9 @@ private:
     QSc2tvChat *sc2tvChat_;
     QStreamBoxChat *streamboxChat_;
     QTwitchChat *twitchChat_;
-
     QYoutubeChat * youtubeChat_;
-
     QLivecodingChat * livecodingChat_;
-
+*/
     QChatUpdateServer *chatUpdateServer_;
 
     QSettings settings_;

@@ -15,8 +15,12 @@
 #include <QXmppMessage.h>
 
 #include "settingsconsts.h"
-
 #include "qlivecodingchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QLivecodingChat> r;
+}
 
 
 const QString DEFAULT_LIVECODING_LOGIN = "broadcasterchat";
@@ -35,17 +39,11 @@ const QString LIVECODING_USER ="LIVECODING";
 const QString LIVECODING_SERVICE = "livecoding";
 
 QLivecodingChat::QLivecodingChat( QObject * parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, xmppClient_( 0 )
-, mucManager_( 0 )
-, channelName_()
-, connectionTime_()
-, smiles_()
-, reconnectTimerId_( -1 )
-, reconnectInterval_( DEFAULT_LIVECODING_RECONNECT_INTERVAL )
-, statisticTimerId_( -1 )
-, statisticInterval_( DEFAULT_LIVECODING_STATISTIC_INTERVAL )
+    : QChatService( parent )
+    , reconnectTimerId_( -1 )
+    , reconnectInterval_( DEFAULT_LIVECODING_RECONNECT_INTERVAL )
+    , statisticTimerId_( -1 )
+    , statisticInterval_( DEFAULT_LIVECODING_STATISTIC_INTERVAL )
 {
 }
 
@@ -303,6 +301,11 @@ void QLivecodingChat::timerEvent( QTimerEvent * event )
     {
         reconnect();
     }
+}
+
+void QLivecodingChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/livecodinglogo.png" ), tr( "Reconnect Livecoding Chat" ), this );
 }
 
 void QLivecodingChat::loadSettings()

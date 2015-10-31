@@ -18,6 +18,11 @@
 
 #include "settingsconsts.h"
 #include "qyoutubechat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QYoutubeChat> r;
+}
 
 const QString DEFAULT_YOUTUBE_CHANNEL_INFO_PREFIX = "https://www.youtube.com/live_chat?v=";
 const QString DEFAULT_YOUTUBE_CHANNEL_INFO_POSTFIX = "&dark_theme=1&from_gaming=1&client_version=1.0";
@@ -35,16 +40,13 @@ const QString YOUTUBE_SERVICE = "youtube";
 
 
 QYoutubeChat::QYoutubeChat( QObject * parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, channelName_()
-, lastMessageTime_()
-, updateMessagesTimerId_( -1 )
-, updateMessagesInterval_( DEFAULT_YOUTUBE_UPDATE_MESSAGES_INTERVAL )
-, updateStatisticTimerId_( -1 )
-, updateStatisticInterval_( DEFAULT_YOUTUBE_UPDATE_STATISTIC_INTERVAL )
-, reconnectTimerId_( -1 )
-, reconnectInterval_( DEFAULT_YOUTUBE_RECONNECT_INTERVAL )
+    : QChatService( parent )
+    , updateMessagesTimerId_( -1 )
+    , updateMessagesInterval_( DEFAULT_YOUTUBE_UPDATE_MESSAGES_INTERVAL )
+    , updateStatisticTimerId_( -1 )
+    , updateStatisticInterval_( DEFAULT_YOUTUBE_UPDATE_STATISTIC_INTERVAL )
+    , reconnectTimerId_( -1 )
+    , reconnectInterval_( DEFAULT_YOUTUBE_RECONNECT_INTERVAL )
 {
 }
 
@@ -268,6 +270,11 @@ void QYoutubeChat::timerEvent( QTimerEvent * event )
     {
         reconnect();
     }
+}
+
+void QYoutubeChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/youtubelogo.png" ), tr( "Reconnect Youtube Chat" ), this );
 }
 
 void QYoutubeChat::loadSettings()

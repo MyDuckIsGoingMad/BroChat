@@ -11,8 +11,6 @@
 #include "qchatservice.h"
 #include "qchatsmile.h"
 
-class QNetworkAccessManager;
-
 class QXmppMessage;
 class QXmppPresence;
 class QXmppIq;
@@ -38,6 +36,7 @@ private:
 
 protected:
     void timerEvent( QTimerEvent *event );
+    void createReconnectAction() override;
 public slots:
     virtual void connect();
     virtual void disconnect();
@@ -58,7 +57,6 @@ private slots:
     void onStatisticLoadError();
 
 private:
-    QNetworkAccessManager *nam_;
     QXmppClient *xmppClient_;
     QXmppMucManager *mucManager_;
     QString channelName_;

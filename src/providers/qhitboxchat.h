@@ -6,7 +6,6 @@
 #include "qchatsmile.h"
 #include "qchatservice.h"
 
-class QNetworkAccessManager;
 class QWebSocket;
 
 
@@ -21,6 +20,7 @@ public:
     virtual ~QHitBoxChat();
 protected:
     virtual void timerEvent( QTimerEvent *event );
+    void createReconnectAction() override;
 private:
     void loadSettings();
 
@@ -62,7 +62,6 @@ private slots:
     void onPong( quint64 elapsedTime, const QByteArray & payload );
 
 private:
-    QNetworkAccessManager *nam_;
     QWebSocket *socket_;
 
     QString channelName_;

@@ -18,6 +18,8 @@ int main( int argc, char *argv[] )
 
     QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
 
+    CoreMediator::instance().init();
+
     QBroChatView chatView;
 
     QObject::connect( &chatView, SIGNAL( closeWindow() ), &app, SLOT( quit() ) );
@@ -30,5 +32,6 @@ int main( int argc, char *argv[] )
     QWebSettings::clearMemoryCaches();
     chatView.settings()->clearMemoryCaches();
 
+    CoreMediator::release();
     return retVal;
 }

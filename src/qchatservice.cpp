@@ -1,21 +1,21 @@
 //#include <QRegExp>
 #include <QDebug>
 
+#include "coremediator.h"
 #include "qchatservice.h"
 
 QChatService::QChatService( QObject *parent )
-: QObject( parent )
-, showSystemMessages_( true )
-, aliasesSelection_( false )
-, removeBlackListUsers_( false )
-, aliasesList_()
-, supportersList_()
-, blackList_()
+    : QObject( parent )
+    , showSystemMessages_( true )
+    , aliasesSelection_( false )
+    , removeBlackListUsers_( false )
+    , m_reconnectAction(nullptr)
 {
 }
 
 QChatService::~QChatService()
 {
+    if(m_reconnectAction) m_reconnectAction->deleteLater();
 }
 
 void QChatService::setShowSystemMessages( bool showSystemMessages )
@@ -83,6 +83,21 @@ void QChatService::setBlackList( const QString &blackList  )
 const QStringList& QChatService::blackList() const
 {
     return blackList_;
+}
+
+QAction *QChatService::getReconnectAction()
+{
+    if(!m_reconnectAction) {
+        createReconnectAction();
+        QObject::connect(m_reconnectAction, SIGNAL(triggered()), this, SLOT(doReconnect()));
+    }
+    return m_reconnectAction;
+}
+
+void QChatService::doReconnect()
+{
+    nam_ = CoreMediator::instance().qnam();
+    reconnect();
 }
 
 bool QChatService::isContainsAliases( const QString &message ) const

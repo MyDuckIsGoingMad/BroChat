@@ -15,8 +15,12 @@
 #include <QTimerEvent>
 
 #include "settingsconsts.h"
-
 #include "qhitboxchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QHitBoxChat> r;
+}
 
 const QString DEFAULT_HITBOX_SERVERS_LIST_LINK = "https://api.hitbox.tv/chat/servers";
 const QString DEFAULT_HITBOX_SMILES_INFO_PEFIX = "https://api.hitbox.tv/chat/emotes/";
@@ -31,19 +35,15 @@ const QString HITBOX_SERVICE = "hitbox";
 const QString HITBOX_USER = "HITBOX";
 
 QHitBoxChat::QHitBoxChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, socket_( 0 )
-, channelName_( DEFAULT_HITBOX_CHANNEL_NAME )
-, servers_()
-, smiles_()
-, reconnectTimerId_( -1 )
-, reconnectInterval_( DEFAULT_HITBOX_RECONNECT_INTERVAL )
-, statisticTimerId_( -1 )
-, statisticInterval_( DEFAULT_HITBOX_STATISTIC_INTERVAL )
-, saveConnectionTimerId_( -1 )
-, saveConnectionInterval_( DEFAULT_HITBOX_SAVE_CONNECTION_INTERVAL )
-, originalColors_( false )
+    : QChatService( parent )
+    , channelName_( DEFAULT_HITBOX_CHANNEL_NAME )
+    , reconnectTimerId_( -1 )
+    , reconnectInterval_( DEFAULT_HITBOX_RECONNECT_INTERVAL )
+    , statisticTimerId_( -1 )
+    , statisticInterval_( DEFAULT_HITBOX_STATISTIC_INTERVAL )
+    , saveConnectionTimerId_( -1 )
+    , saveConnectionInterval_( DEFAULT_HITBOX_SAVE_CONNECTION_INTERVAL )
+    , originalColors_( false )
 {
 }
 
@@ -540,6 +540,11 @@ void QHitBoxChat::timerEvent( QTimerEvent *event )
     {
         reconnect();
     }
+}
+
+void QHitBoxChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/hitboxlogo.png" ), tr( "Reconnect Hitbox Chat" ), this );
 }
 
 void QHitBoxChat::loadSettings()

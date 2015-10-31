@@ -16,8 +16,12 @@
 #include <QTimerEvent>
 
 #include "settingsconsts.h"
-
 #include "qstreamboxchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QStreamBoxChat> r;
+}
 
 const QString DEFAULT_STREAMBOX_WEBSOCKET_LINK = "ws://stream-box.ru:8080";
 
@@ -35,16 +39,13 @@ const QString STREAMBOX_SERVICE = "streambox";
 const QString STREAMBOX_USER = "STREAMBOX";
 
 QStreamBoxChat::QStreamBoxChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, socket_( 0 )
-, channelName_()
-, reconnectTimerId_( -1 )
-, reconnectInterval_( DEFAULT_STREAMBOX_RECONNECT_INTERVAL )
-, statisticTimerId_( -1 )
-, statisticInterval_( DEFAULT_STATISTIC_INTERVAL )
-, saveConnectionTimerId_( -1 )
-, saveConnectionInterval_( DEFAULT_STREAMBOX_SAVE_CONNECTION_INTERVAL )
+    : QChatService( parent )
+    , reconnectTimerId_( -1 )
+    , reconnectInterval_( DEFAULT_STREAMBOX_RECONNECT_INTERVAL )
+    , statisticTimerId_( -1 )
+    , statisticInterval_( DEFAULT_STATISTIC_INTERVAL )
+    , saveConnectionTimerId_( -1 )
+    , saveConnectionInterval_( DEFAULT_STREAMBOX_SAVE_CONNECTION_INTERVAL )
 {
     //loadSettings();
 }
@@ -520,6 +521,11 @@ void QStreamBoxChat::timerEvent( QTimerEvent *event )
     {
         reconnect();
     }
+}
+
+void QStreamBoxChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/streamboxlogo.png" ), tr( "Reconnect Streambox Chat" ), this );
 }
 
 

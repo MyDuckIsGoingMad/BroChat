@@ -3,8 +3,6 @@
 
 #include "qchatservice.h"
 
-class QNetworkAccessManager;
-
 class QAcesChat: public QChatService
 {
     Q_OBJECT
@@ -13,6 +11,7 @@ public:
     virtual ~QAcesChat();
 protected:
     virtual void timerEvent( QTimerEvent * );
+    void createReconnectAction() override;
 private:
     void loadSettings();
 
@@ -29,7 +28,6 @@ private slots:
     void onChatInfoLoaded();
     void onChatInfoLoadError();
 private:
-    QNetworkAccessManager *nam_;
     QString channelName_;
     int lastMessageId_;
     int updateChatInfoTimerId_;

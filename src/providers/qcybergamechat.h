@@ -8,7 +8,6 @@
 
 #include "qchatservice.h"
 
-class QNetworkAccessManager;
 class QWebSocket;
 
 class QCyberGameChat: public QChatService
@@ -19,6 +18,7 @@ public:
     virtual ~QCyberGameChat();
 protected:
     virtual void timerEvent( QTimerEvent * );
+    void createReconnectAction() override;
 private:
     void loadSettings();
     void getSmiles();
@@ -41,7 +41,6 @@ private slots:
 
     void onPong( quint64 elapsedTime, const QByteArray & payload );
 private:
-    QNetworkAccessManager *nam_;
     QWebSocket *socket_;
     QString channelName_;
     int lastUpd_;

@@ -19,8 +19,12 @@
 #include <QFileInfo>
 
 #include "settingsconsts.h"
-
 #include "qgoodgamechat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QGoodGameChat> r;
+}
 
 const QString DEFAULT_GOODGAME_WEBSOCKET_LINK = "ws://chat.goodgame.ru:8081/chat/websocket";
 
@@ -42,20 +46,14 @@ const QString GOODGAME_USER = "GOODGAME";
 const QString GOODGAME_SERVICE = "goodgame";
 
 QGoodGameChat::QGoodGameChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, socket_( 0 )
-, channelName_()
-, lastTimeStamp_( 0 )
-, smiles_()
-, animatedSmiles_()
-, saveConnectionTimerId_( -1 )
-, reconnectTimerId_( -1 )
-, saveConnectionInterval_( DEFAULT_GOODGAME_SAVE_CONNECTION_INTERVAL )
-, reconnectInterval_( DEFAULT_GOODGAME_RECONNECT_INTERVAL )
-, statisticTimerId_( -1 )
-, statisticTimerInterval_( DEFAULT_GOODGAME_STATISTIC_INTERVAL )
-, useAnimatedSmiles_( false )
+    : QChatService( parent )
+    , saveConnectionTimerId_( -1 )
+    , reconnectTimerId_( -1 )
+    , saveConnectionInterval_( DEFAULT_GOODGAME_SAVE_CONNECTION_INTERVAL )
+    , reconnectInterval_( DEFAULT_GOODGAME_RECONNECT_INTERVAL )
+    , statisticTimerId_( -1 )
+    , statisticTimerInterval_( DEFAULT_GOODGAME_STATISTIC_INTERVAL )
+    , useAnimatedSmiles_( false )
 {
 }
 
@@ -600,6 +598,11 @@ void QGoodGameChat::timerEvent( QTimerEvent * event )
     {
         reconnect();
     }
+}
+
+void QGoodGameChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/goodgamelogo.png" ), tr( "Reconnect Goodgame Chat" ), this );
 }
 
 void QGoodGameChat::changeUseAnimatedSmiles( bool useAnimatedSmiles )

@@ -18,8 +18,12 @@
 #include <QFileInfo>
 
 #include "settingsconsts.h"
-
 #include "qcybergamechat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QCyberGameChat> r;
+}
 
 const QString DEFAULT_CYBERGAME_WEBSOCKET_LINK = "ws://cybergame.tv:9090/websocket";
 const QString DEFAULT_CYBERGAME_CHAT_LINK = "http://cybergame.tv/cgchat.htm";
@@ -35,18 +39,14 @@ const QString CYBERGAME_USER = "CYBERGAME";
 const QString CYBERGAME_SERVICE = "cybergame";
 
 QCyberGameChat::QCyberGameChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, socket_( 0 )
-, channelName_()
-, lastUpd_( 0 )
-, smiles_()
-, saveConnectionTimerId_( -1 )
-, reconnectTimerId_( -1 )
-, saveConnectionInterval_( DEFAULT_CYBERGAME_SAVE_CONNECTION_INTERVAL )
-, reconnectInterval_( DEFAULT_CYBERGAME_RECONNECT_INTERVAL )
-, statisticTimerId_( -1 )
-, statisticInterval_( DEFAULT_CYBERGAME_STATISTIC_INTERVAL )
+    : QChatService( parent )
+    , lastUpd_( 0 )
+    , saveConnectionTimerId_( -1 )
+    , reconnectTimerId_( -1 )
+    , saveConnectionInterval_( DEFAULT_CYBERGAME_SAVE_CONNECTION_INTERVAL )
+    , reconnectInterval_( DEFAULT_CYBERGAME_RECONNECT_INTERVAL )
+    , statisticTimerId_( -1 )
+    , statisticInterval_( DEFAULT_CYBERGAME_STATISTIC_INTERVAL )
 {
     //loadSettings();
     //getSmiles();
@@ -427,6 +427,11 @@ void QCyberGameChat::timerEvent( QTimerEvent *event )
     {
         reconnect();
     }
+}
+
+void QCyberGameChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/cybergamelogo.png" ), tr( "Reconnect Aces Chat" ), this );
 }
 
 void QCyberGameChat::loadSettings()

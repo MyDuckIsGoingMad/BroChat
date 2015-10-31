@@ -3,8 +3,6 @@
 
 #include "qchatservice.h"
 
-class QNetworkAccessManager;
-
 class QGipsyTeamChat: public QChatService
 {
     Q_OBJECT
@@ -13,6 +11,7 @@ public:
     virtual ~QGipsyTeamChat();
 protected:
     virtual void timerEvent( QTimerEvent *event );
+    void createReconnectAction() override;
 private:
     void loadSettings();
 
@@ -30,7 +29,6 @@ private slots:
     void onMessagesLoaded();
     void onMessagesLoadError();
 private:
-    QNetworkAccessManager *nam_;
     QString channelName_;
     QString channelLink_;
     QString lastMessageId_;

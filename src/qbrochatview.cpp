@@ -65,32 +65,17 @@ const int DEFAULT_WINDOW_HEIGHT = 512;
 const int DEFAULT_SCROLL_SPEED = 32;
 
 QBroChatView::QBroChatView( QWidget *parent )
-: QWebView( parent )
-, acesChat_( new QAcesChat( this ) )
-, cybergameChat_( new QCyberGameChat( this ) )
-, funstreamChat_( new QFunStreamChat( this ) )
-, gamerstvChat_( new QGamersTvChat( this ) )
-, gipsyteamChat_( new QGipsyTeamChat( this ) )
-, goodgameChat_( new QGoodGameChat( this ) )
-, hitboxChat_( new QHitBoxChat( this ) )
-, realltvChat_( new QReallTvChat( this ) )
-, sc2tvChat_( new QSc2tvChat( this ) )
-, streamboxChat_( new QStreamBoxChat( this ) )
-, twitchChat_( new QTwitchChat( this ) )
-
-, youtubeChat_( new QYoutubeChat( this ) )
-
-, livecodingChat_( new QLivecodingChat( this ) )
-
-, chatUpdateServer_( 0 )
-, settings_()
-, moveState_( false )
-, mouseStartPos_( 0 ,0 )
-, updatePictureId_( -1 )
-, updatePictureInterval_( DEFAULT_SAVE_TO_FILE_INTERVAL )
-, showSystemMessages_( DEFAULT_SHOW_SYSTEM_MESSAGES )
-, showImages_( DEFAULT_SHOW_IMAGES )
-, saveToFile_( DEFAULT_SAVE_TO_FILE )
+    : QWebView( parent )
+    , m_core(CoreMediator::instance())
+    , chatUpdateServer_( 0 )
+    , settings_()
+    , moveState_( false )
+    , mouseStartPos_( 0 ,0 )
+    , updatePictureId_( -1 )
+    , updatePictureInterval_( DEFAULT_SAVE_TO_FILE_INTERVAL )
+    , showSystemMessages_( DEFAULT_SHOW_SYSTEM_MESSAGES )
+    , showImages_( DEFAULT_SHOW_IMAGES )
+    , saveToFile_( DEFAULT_SAVE_TO_FILE )
 {
     page()->settings()->setAttribute( QWebSettings::AcceleratedCompositingEnabled, true );
     page()->settings()->setAttribute( QWebSettings::Accelerated2dCanvasEnabled, true );
@@ -119,6 +104,7 @@ QBroChatView::QBroChatView( QWidget *parent )
     QAction *exitAction = new QAction( tr( "&Exit" ), this );
 
     QAction *reconnectAllAction = new QAction( tr( "Reconnect All Chats" ), this );
+/*
     QAction *reconnectAcesAction = new QAction( QIcon( ":/resources/aceslogo.png" ), tr( "Reconnect Aces Chat" ), this );
     QAction *reconnectCybergameAction = new QAction( QIcon( ":/resources/cybergamelogo.png" ), tr( "Reconnect Cybergame Chat" ), this );
     QAction *reconnectFunstreamAction = new QAction( QIcon( ":/resources/funstreamlogo.png" ), tr( "Reconnect Funstream Chat" ), this );
@@ -132,24 +118,12 @@ QBroChatView::QBroChatView( QWidget *parent )
     QAction *reconnectStreamboxAction = new QAction( QIcon( ":/resources/streamboxlogo.png" ), tr( "Reconnect Streambox Chat" ), this );
     QAction *reconnectTwitchAction = new QAction( QIcon( ":/resources/twitchlogo.png" ), tr( "Reconnect Twitch Chat" ), this );
     QAction *reconnectYoutubeAction = new QAction( QIcon( ":/resources/youtubelogo.png" ), tr( "Reconnect Youtube Chat" ), this );
-
+*/
     QObject::connect( settingsAction, SIGNAL( triggered() ), this, SLOT( showSettings() ) );
     QObject::connect( exitAction, SIGNAL( triggered() ), this, SIGNAL( closeWindow() ) );
 
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), acesChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), cybergameChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), funstreamChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), gamerstvChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), gipsyteamChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), goodgameChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), hitboxChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), livecodingChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), realltvChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), sc2tvChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), streamboxChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), twitchChat_, SLOT( reconnect() ) );
-    QObject::connect( reconnectAllAction, SIGNAL( triggered() ), youtubeChat_, SLOT( reconnect() ) );
-
+    QObject::connect( reconnectAllAction, SIGNAL(triggered()), &m_core, SIGNAL(reconnect()));
+/*
     QObject::connect( reconnectAcesAction, SIGNAL( triggered() ), acesChat_, SLOT( reconnect() ) );
     QObject::connect( reconnectCybergameAction, SIGNAL( triggered() ), cybergameChat_, SLOT( reconnect() ) );
     QObject::connect( reconnectFunstreamAction, SIGNAL( triggered() ), funstreamChat_, SLOT( reconnect() ) );
@@ -163,10 +137,11 @@ QBroChatView::QBroChatView( QWidget *parent )
     QObject::connect( reconnectStreamboxAction, SIGNAL( triggered() ), streamboxChat_, SLOT( reconnect() ) );
     QObject::connect( reconnectTwitchAction, SIGNAL( triggered() ), twitchChat_, SLOT( reconnect() ) );
     QObject::connect( reconnectYoutubeAction, SIGNAL( triggered() ), youtubeChat_, SLOT( reconnect() ) );
-
+*/
     addAction( settingsAction );
 
     addAction( reconnectAllAction );
+    /*
     addAction( reconnectAcesAction );
     addAction( reconnectCybergameAction );
     addAction( reconnectFunstreamAction );
@@ -180,57 +155,13 @@ QBroChatView::QBroChatView( QWidget *parent )
     addAction( reconnectStreamboxAction );
     addAction( reconnectTwitchAction );
     addAction( reconnectYoutubeAction );
-
+*/
+    addActions(m_core.getActions());
     addAction( exitAction );
 
-    QObject::connect( acesChat_, SIGNAL( newMessage ( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), acesChat_, SLOT( reconnect() ) );
-
-    QObject::connect( cybergameChat_, SIGNAL( newMessage ( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( cybergameChat_, SIGNAL( newStatistic( QChatStatistic* ) ), this, SLOT( onNewStatistic( QChatStatistic* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), cybergameChat_, SLOT( reconnect() ) );
-
-    QObject::connect( gamerstvChat_, SIGNAL( newMessage( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( gamerstvChat_, SIGNAL( newStatistic( QChatStatistic* ) ), this, SLOT( onNewStatistic( QChatStatistic* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), gamerstvChat_, SLOT( reconnect() ) );
-
-    QObject::connect( goodgameChat_, SIGNAL( newMessage ( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( goodgameChat_, SIGNAL( newStatistic( QChatStatistic* ) ), this, SLOT( onNewStatistic( QChatStatistic* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), goodgameChat_, SLOT( reconnect() ) );
-
-    QObject::connect( sc2tvChat_, SIGNAL( newMessage ( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), sc2tvChat_, SLOT( reconnect() ) );
-
-    QObject::connect( twitchChat_, SIGNAL( newMessage( QChatMessage * ) ), this, SLOT( slotNewMessage( QChatMessage * ) ) );
-    QObject::connect( twitchChat_, SIGNAL( newStatistic( QChatStatistic* ) ), this, SLOT( onNewStatistic( QChatStatistic* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), twitchChat_, SLOT( reconnect() ) );
-
-    QObject::connect( funstreamChat_, SIGNAL( newMessage( QChatMessage * ) ), this, SLOT( slotNewMessage( QChatMessage * ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), funstreamChat_, SLOT( reconnect() ) );
-
-    QObject::connect( streamboxChat_, SIGNAL( newMessage( QChatMessage * ) ), this, SLOT( slotNewMessage( QChatMessage * ) ) );
-    QObject::connect( streamboxChat_, SIGNAL( newStatistic( QChatStatistic* ) ), this, SLOT( onNewStatistic( QChatStatistic* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), streamboxChat_, SLOT( reconnect() ) );
-
-    QObject::connect( hitboxChat_, SIGNAL( newMessage( QChatMessage * ) ), this, SLOT( slotNewMessage( QChatMessage * ) ) );
-    QObject::connect( hitboxChat_, SIGNAL( newStatistic( QChatStatistic* ) ), this, SLOT( onNewStatistic( QChatStatistic* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), hitboxChat_, SLOT( reconnect() ) );
-
-    QObject::connect( gipsyteamChat_, SIGNAL( newMessage( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), gipsyteamChat_, SLOT( reconnect() ) );
-
-    QObject::connect( realltvChat_, SIGNAL( newMessage( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( realltvChat_, SIGNAL( newStatistic( QChatStatistic* ) ), this, SLOT( onNewStatistic( QChatStatistic* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), realltvChat_, SLOT( reconnect() ) );
-
-
-    //youtube
-    QObject::connect( youtubeChat_, SIGNAL( newMessage( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), youtubeChat_, SLOT( reconnect() ) );
-
-    //livecoding
-    QObject::connect( livecodingChat_, SIGNAL( newMessage( QChatMessage* ) ), this, SLOT( slotNewMessage( QChatMessage* ) ) );
-    QObject::connect( this, SIGNAL( loadFinished( bool ) ), livecodingChat_, SLOT( reconnect() ) );
+    QObject::connect( &m_core, SIGNAL(newMessage(QChatMessage*)), this, SLOT(slotNewMessage(QChatMessage*)));
+    QObject::connect( &m_core, SIGNAL(newStatistic(QChatStatistic*)), this, SLOT(onNewStatistic(QChatStatistic*)));
+    QObject::connect( this, SIGNAL(loadFinished(bool)), &m_core, SIGNAL(reconnect()));
 
 
     QObject::connect( this, SIGNAL( loadFinished( bool ) ), this, SLOT( loadFlagsAndAttributes() ) );
@@ -418,20 +349,7 @@ void QBroChatView::changeStyle( const QString &styleName )
 void QBroChatView::changeShowSystemMessagesState()
 {
     showSystemMessages_ = settings_.value( SHOW_SYSTEM_MESSAGES_SETTING_PATH, DEFAULT_SHOW_SYSTEM_MESSAGES ).toBool();
-
-    acesChat_->setShowSystemMessages( showSystemMessages_ );
-    cybergameChat_->setShowSystemMessages( showSystemMessages_ );
-    funstreamChat_->setShowSystemMessages( showSystemMessages_ );
-    gamerstvChat_->setShowSystemMessages( showSystemMessages_ );
-    gipsyteamChat_->setShowSystemMessages( showSystemMessages_ );
-    goodgameChat_->setShowSystemMessages( showSystemMessages_ );
-    hitboxChat_->setShowSystemMessages( showSystemMessages_ );
-    livecodingChat_->setShowSystemMessages( showSystemMessages_ );
-    realltvChat_->setShowSystemMessages( showSystemMessages_ );
-    sc2tvChat_->setShowSystemMessages( showSystemMessages_ );
-    streamboxChat_->setShowSystemMessages( showSystemMessages_ );
-    twitchChat_->setShowSystemMessages( showSystemMessages_ );
-    youtubeChat_->setShowSystemMessages( showSystemMessages_ );
+    m_core.setShowSystemMessages(showSystemMessages_);
 }
 
 void QBroChatView::changeShowImagesState()
@@ -521,7 +439,7 @@ void QBroChatView::closeEvent( QCloseEvent *event )
 void QBroChatView::showSettings()
 {
     QSettingsDialog *settingsDialog = new QSettingsDialog( this );
-
+/*
     QObject::connect( settingsDialog, SIGNAL( acesChannelChanged() ), acesChat_, SLOT( reconnect() ) );
     QObject::connect( settingsDialog, SIGNAL( cyberGameChannelChanged() ), cybergameChat_, SLOT( reconnect() ) );
     QObject::connect( settingsDialog, SIGNAL( funstreamChannelChanged() ), funstreamChat_, SLOT( reconnect() ) );
@@ -599,7 +517,7 @@ void QBroChatView::showSettings()
     QObject::connect( settingsDialog, SIGNAL( sc2tvOriginalColorsChanged( bool ) ), sc2tvChat_, SLOT( changeOriginalColors( bool ) ) );
 
     QObject::connect( settingsDialog, SIGNAL( goodGameUseAnimatedSmilesChanged( bool ) ), goodgameChat_, SLOT( changeUseAnimatedSmiles( bool ) ) );
-
+*/
     QObject::connect( settingsDialog, SIGNAL( styleChanged() ), this, SLOT( changeStyle() ) );
     QObject::connect( settingsDialog, SIGNAL( opacityChanged() ), this, SLOT( changeOpacity() ) );
     QObject::connect( settingsDialog, SIGNAL( flagsOrAttributesChanged() ), this, SLOT( loadFlagsAndAttributes() ) );

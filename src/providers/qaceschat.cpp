@@ -1,15 +1,17 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-
 #include <QSettings>
-
+#include <QAction>
 #include <QTimerEvent>
 
-
 #include "settingsconsts.h"
-
 #include "qaceschat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QAcesChat> r;
+}
 
 const QString DEFAULT_ACES_CHAT_REQUEST_LINK_PREFIX = "http://aces.gg/engine/ajax/tournament.php/?act=chat_messages&chat_message_fix_limit=";
 const QString DEFAULT_ACES_SMILES_SHORT = "/uploads/hdgstournament/smiley/";
@@ -29,15 +31,15 @@ struct MessageData
 };
 
 QAcesChat::QAcesChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, channelName_()
-, lastMessageId_( -1 )
-, updateChatInfoTimerId_( -1 )
-, reconnectTimerId_( -1 )
-, updateChatInfoInterval_( DEFAULT_ACES_UPDATE_CHAT_INFO_INTERVAL )
-, reconnectInterval_( DEFAULT_ACES_RECONNECT_INTERVAL )
+    : QChatService( parent )
+    , lastMessageId_( -1 )
+    , updateChatInfoTimerId_( -1 )
+    , reconnectTimerId_( -1 )
+    , updateChatInfoInterval_( DEFAULT_ACES_UPDATE_CHAT_INFO_INTERVAL )
+    , reconnectInterval_( DEFAULT_ACES_RECONNECT_INTERVAL )
 {
+//    m_reconnectAction = new QAction( QIcon( ":/resources/aceslogo.png" ), tr( "Reconnect Aces Chat" ), this );
+//    QObject::connect(m_reconnectAction, SIGNAL(triggered()), this, SLOT(doReconnect()));
 }
 
 QAcesChat::~QAcesChat()
@@ -338,6 +340,11 @@ void QAcesChat::timerEvent( QTimerEvent *event )
     {
         reconnect();
     }
+}
+
+void QAcesChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/aceslogo.png" ), tr( "Reconnect Sc2tv Chat" ), this );
 }
 
 void QAcesChat::loadSettings()

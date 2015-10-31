@@ -18,8 +18,12 @@
 #include <QFileInfo>
 
 #include "settingsconsts.h"
-
 #include "qsc2tvchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QSc2tvChat> r;
+}
 
 const QString DEFAULT_SC2TV_STREAMS_LINK = "http://sc2tv.ru/streams_list.json";
 const QString DEFAULT_SC2TV_SMILES_LINK = "http://chat.sc2tv.ru/js/smiles.js";
@@ -38,20 +42,14 @@ const int DEFAULT_SC2TV_UPDATE_MESSAGES_INTERVAL = 3000;
 const int DEFAULT_SC2TV_RECONNECT_INTERVAL = DEFAULT_SC2TV_UPDATE_MESSAGES_INTERVAL * 10;
 
 QSc2tvChat::QSc2tvChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, channelName_()
-, channelLink_()
-//, lastMessageTime_()
-//, lastMainMessageId_()
-, lastMessageId_()
-, smiles_()
-, styles_()
-, updateMessagesTimerId_( -1 )
-, reconnectTimerId_( -1 )
-, updateMessagesInterval_( DEFAULT_SC2TV_UPDATE_MESSAGES_INTERVAL )
-, reconnectInterval_( DEFAULT_SC2TV_RECONNECT_INTERVAL )
-, originalColors_( false )
+    : QChatService( parent )
+    //, lastMessageTime_()
+    //, lastMainMessageId_()
+    , updateMessagesTimerId_( -1 )
+    , reconnectTimerId_( -1 )
+    , updateMessagesInterval_( DEFAULT_SC2TV_UPDATE_MESSAGES_INTERVAL )
+    , reconnectInterval_( DEFAULT_SC2TV_RECONNECT_INTERVAL )
+    , originalColors_( false )
 {
     //loadSettings();
     //getLastMessageId();
@@ -563,6 +561,11 @@ void QSc2tvChat::timerEvent( QTimerEvent * event )
     {
         reconnect();
     }
+}
+
+void QSc2tvChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/sc2tvlogo.png" ), tr( "Reconnect Sc2tv Chat" ), this );
 }
 
 void QSc2tvChat::loadSettings()

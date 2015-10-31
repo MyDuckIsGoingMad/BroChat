@@ -7,7 +7,6 @@
 #include "qchatservice.h"
 
 
-class QNetworkAccessManager;
 class QWebSocket;
 
 class QFunStreamChat: public QChatService
@@ -18,6 +17,7 @@ public:
     virtual ~QFunStreamChat();
 protected:
     virtual void timerEvent( QTimerEvent * );
+    void createReconnectAction() override;
 private:
     void loadSettings();
     void getChannelInfo();
@@ -44,7 +44,6 @@ private slots:
 
     void onPong( quint64 elapsedTime, const QByteArray & payload );
 private:
-    QNetworkAccessManager *nam_;
     QWebSocket *socket_;
     QString channelName_;
     QString channelId_;

@@ -20,9 +20,12 @@
 #include <QXmppMucManager.h>
 
 #include "settingsconsts.h"
-
-
 #include "qrealltvchat.h"
+#include "coremediator.h"
+
+namespace {
+    ChatServiceRegistrator<QReallTvChat> r;
+}
 
 const QString DEFAULT_REALLTV_JID = "903@reall.tv";
 const QString DEFAULT_REALLTV_PASSWORD = "8e4820297b36ec893f1242bc36ffc1e3";
@@ -44,18 +47,11 @@ const QString REALLTV_SERVICE = "realltv";
 const QString REALLTV_USER = "REALLTV";
 
 QReallTvChat::QReallTvChat( QObject *parent )
-: QChatService( parent )
-, nam_( new QNetworkAccessManager( this ) )
-, xmppClient_( 0 )
-, mucManager_( 0 )
-, channelName_()
-, cid_()
-, connectionTime_()
-, smiles_()
-, reconnectTimerId_( -1 )
-, reconnectInterval_( DEFAULT_REALLTV_RECONNECT_INTERVAL )
-, statisticTimerId_( -1 )
-, statisticInterval_( DEFAULT_REALLTV_STATISTIC_INTERVAL )
+    : QChatService( parent )
+    , reconnectTimerId_( -1 )
+    , reconnectInterval_( DEFAULT_REALLTV_RECONNECT_INTERVAL )
+    , statisticTimerId_( -1 )
+    , statisticInterval_( DEFAULT_REALLTV_STATISTIC_INTERVAL )
 {
     /*
     QObject::connect( xmppClient_, SIGNAL( connected() ), this, SLOT( onConnected() ) );
@@ -501,6 +497,11 @@ void QReallTvChat::timerEvent( QTimerEvent *event )
     {
         reconnect();
     }
+}
+
+void QReallTvChat::createReconnectAction()
+{
+    m_reconnectAction = new QAction( QIcon( ":/resources/realltvlogo.png" ), tr( "Reconnect Realltv Chat" ), this );
 }
 
 void QReallTvChat::loadSettings()

@@ -9,8 +9,6 @@
 
 #include "qchatservice.h"
 
-class QNetworkAccessManager;
-
 class QSc2tvChat: public QChatService
 {
     Q_OBJECT
@@ -19,6 +17,7 @@ public:
     virtual ~QSc2tvChat();
 protected:
     virtual void timerEvent( QTimerEvent * );
+    void createReconnectAction() override;
 private:
     void loadSettings();
 
@@ -33,9 +32,9 @@ private:
 
     QString insertSmiles( const QString &message ) const;
 public slots:
-    virtual void connect();
-    virtual void disconnect();
-    virtual void reconnect();
+    void connect() override;
+    void disconnect() override;
+    void reconnect() override;
 
     void setUpdateMessagesInterval( int interval );
     void setReconnectInterval( int interval );
@@ -58,7 +57,6 @@ private slots:
     void onMessagesLoaded();
     void onMessagesLoadError();
 private:
-    QNetworkAccessManager *nam_;
     QString channelName_;
     QString channelLink_;
     //QString lastMessageTime_;
