@@ -44,7 +44,10 @@ QVariant QChatHistoryListModel::data(const QModelIndex &index, int role) const
 
 void QChatHistoryListModel::addMessage(QChatMessageShared message)
 {
-    qDebug() << message->message();
+
+    QString msg = QChatMessage::insertLinks( message->message(), true );
+    qDebug() << msg;
+    message->setMessage(msg);
     beginInsertRows(QModelIndex(), m_messages.size(), m_messages.size());
     m_messages.push_back(message);
     endInsertRows();
